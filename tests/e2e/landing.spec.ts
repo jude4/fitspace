@@ -74,7 +74,7 @@ test('live 3D demo, material comparison, camera controls, and navigation', async
     .click();
   await expect(page).toHaveURL('/workspace');
   await expect(
-    page.getByText('THE WORKSPACE · COMING IN PHASE 2'),
+    page.getByRole('heading', { name: 'FitSpace room builder' }),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });

@@ -1,6 +1,8 @@
 'use client';
 import dynamic from 'next/dynamic';
-import { Component, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { SceneBoundary } from '@/components/scene-boundary';
+import { useWebGL } from '@/lib/use-webgl';
 import {
   ArrowUpRight,
   Box,
@@ -27,18 +29,6 @@ function Loading() {
     </div>
   );
 }
-class SceneBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode },
-  { failed: boolean }
-> {
-  state = { failed: false };
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-  render() {
-    return this.state.failed ? this.props.fallback : this.props.children;
-  }
-}
 export function RoomPreview() {
   const {
     palette,
@@ -51,37 +41,19 @@ export function RoomPreview() {
     setView,
   } = useDemoStore();
   const reducedMotion = useReducedMotion();
-  const [supported, setSupported] = useState<boolean | null>(null);
-  const [lowQuality, setLowQuality] = useState(false);
+  const { supported, lowQuality } = useWebGL();
   const [visible, setVisible] = useState(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [generation, setGeneration] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl2');
-      setSupported(Boolean(gl));
-      if (gl) {
-        const debug = gl.getExtension('WEBGL_debug_renderer_info');
-        const renderer = debug
-          ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL))
-          : '';
-        setLowQuality(
-          /swiftshader|llvmpipe|software/i.test(renderer) ||
-            navigator.hardwareConcurrency <= 4,
-        );
-      }
-      gl?.getExtension('WEBGL_lose_context')?.loseContext();
-    });
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(entry.isIntersecting),
       { rootMargin: '100px' },
     );
     if (ref.current) observer.observe(ref.current);
     return () => {
-      cancelAnimationFrame(frame);
       observer.disconnect();
     };
   }, []);

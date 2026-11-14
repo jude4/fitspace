@@ -127,8 +127,8 @@ export default function Home() {
                 </h2>
               </div>
               <p>
-                Our live demo is the first step. The measured room editor,
-                furniture placement, and spatial analysis are next.
+                Explore the live demo, then create your own measured room.
+                Furniture placement and spatial analysis are next.
               </p>
             </div>
             <ol className="steps">
@@ -148,7 +148,7 @@ export default function Home() {
                   Enter your room measurements and build a space that reflects
                   your own. Metric and imperial, with clear measurement sources.
                 </p>
-                <small>PLANNED · ROOM EDITOR</small>
+                <small>AVAILABLE · ROOM BUILDER</small>
               </li>
               <li>
                 <span>03</span>

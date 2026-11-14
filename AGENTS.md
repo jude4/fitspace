@@ -4,7 +4,7 @@ Before changes, read `README.md`, `docs/PROJECT_VISION.md`, `docs/ARCHITECTURE.m
 
 ## Phase discipline
 
-- Work only on the approved phase. Phases 0–1 are complete; Phase 2 requires explicit approval. See `docs/PROGRESS.md` for current evidence and limitations.
+- Work only on the approved phase. Phases 0–2 are complete; Phase 3 requires explicit approval. See `docs/PROGRESS.md` for current evidence and limitations.
 - Explain scope, files, dependencies, checks, and risks before implementation.
 - Complete the phase in small tasks, run relevant checks, update progress/roadmap/decisions/testing, report results, and stop for explicit approval before the next phase.
 - Never mark planned features or unrun checks as complete. Keep the app runnable once initialized.

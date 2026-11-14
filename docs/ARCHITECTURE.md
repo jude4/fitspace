@@ -1,6 +1,6 @@
 # Architecture
 
-Status: architecture baseline from Phase 0. Phase 1 implements the Next.js shell, shared UI, Zustand demo state, and lazy-loaded procedural WebGL room. Database, editor domain commands, persistence, and integrations below remain future specifications. Exact installed versions and compatibility evidence are in [DEPENDENCIES.md](DEPENDENCIES.md).
+Status: architecture baseline from Phase 0. Phases 1–2 implement the Next.js shell, shared UI, demo, measured rectangular-room domain commands, and workspace. Database, furniture placements, persistence, and integrations below remain future specifications. Exact installed versions and compatibility evidence are in [DEPENDENCIES.md](DEPENDENCIES.md).
 
 ## Stack and boundaries
 
@@ -173,3 +173,17 @@ Uploads use allowlisted formats, size/geometry/texture limits, quarantine, autho
 Demand rendering is the default. Camera motion is opt-in, slow, offscreen-paused, and disabled for reduced motion. Camera reset updates the existing camera rather than recreating the GPU context. A context-loss listener is registered with cleanup. Responsive camera distance adjusts with canvas aspect ratio.
 
 Thin structural shapes use simple boxes; upholstered shapes use modest rounded geometry. WebGL renderer detection uses the optional debug extension where available; detected software renderers and devices reporting ≤4 logical cores receive 0.75 DPR and disabled dynamic shadows. Otherwise DPR is capped at 1.5 and bounded 1024px directional shadows are enabled. Detection is a heuristic; it does not establish universal performance. Reference-device profiling remains required.
+
+## Phase 2 implementation notes
+
+- `src/domain/room.ts` defines the independent, serializable rectangular room, per-axis provenance, material IDs, presets, validation, commands, and six geometry descriptors. The implemented room has a guest ID/name and no openings. The broader versioned scene/placement contract above remains a future persistence design; it is not an implemented import API.
+- `src/domain/units.ts` handles explicit metric and feet/inches conversion; canonical values are never rewritten by display toggles. Dimension forms commit only edited axes, preserving full precision elsewhere. Unapplied form edits reset on a unit or canonical-dimension change; users are instructed to apply first.
+- `src/features/editor/editor-store.ts` holds the current room plus at most 100 prior snapshots. Valid dimension, material, and preset-creation commands are atomic and undoable. Invalid/no-op commands do not enter history; a valid new edit clears redo. Camera/navigation, units, visibility, grid, selection, and announcements are transient. No persistence is added before Phase 3.
+- `src/scene/editor-room.tsx` consumes the same pure geometry descriptors that the Three.js bounding-box tests exercise. Floor/ceiling thickness is 0.12 m with interior faces at Y=0/height. Walls extend outward, with north at Z=0, south Z=depth, west X=0, east X=width. The measured interior remains exactly width × depth × height. Two walls and ceiling start hidden for a cutaway; all six surfaces can be shown/selected.
+- `src/scene/floor-texture.ts` generates deterministic original 128px textures with a two-meter repeat scale. Wood grain, stone seams, and concrete noise distinguish finishes. Owned textures are disposed on replacement/unmount; R3F owns mesh geometry/material cleanup. No downloads or manufacturer claims are involved.
+- `src/domain/room-camera.ts` computes a bounding-sphere fit using the limiting horizontal/vertical perspective field of view, or an orthographic footprint with margin. Supported widths/depths are 1–30 m and heights 1.8–6 m. Framing is recalculated on dimensions, aspect ratio, view, and explicit reset, not material/selection changes.
+- `src/scene/editor-camera.tsx` owns mutable Three cameras through refs and exposes orbit/pan/zoom plus accessible navigation buttons. Overhead is an orthographic top-down view with north up. Individual navigation events are consumed once; editing dimensions cannot replay an old pan/zoom action.
+- `src/features/editor` separates workspace chrome, toolbar, room hierarchy/presets, dimension form, inspector, and viewport. Below 1231px one side panel is shown at a time; at ≤760px the scene precedes the chosen panel. Keyboard order follows the visible panel switch. Camera controls do not require dragging.
+- The landing and editor share WebGL capability/quality detection, error boundaries, and context-loss lifecycle handling. Rendering remains on demand. Unsupported graphics retain numeric editing; retrying the renderer keeps the room store intact. Software rendering still cannot establish physical-device FPS.
+
+Measurement validity is not measurement accuracy: samples and user-entered dimensions remain labeled. This phase does not check collisions, delivery, real-world fit, doors, or accessibility compliance.

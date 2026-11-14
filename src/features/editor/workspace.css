@@ -1,0 +1,809 @@
+.workspace-shell {
+  background: #f5f5ef;
+  min-height: 100dvh;
+  color: #384133;
+}
+.workspace-header {
+  height: 78px;
+  background: #fafaf6;
+  border-bottom: 1px solid #dce0d4;
+  display: flex;
+  align-items: center;
+  padding: 0 26px;
+  gap: 28px;
+}
+.workspace-header .brand {
+  font-size: 27px;
+}
+.project-heading {
+  border-left: 1px solid #dce0d4;
+  padding-left: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.project-heading > span {
+  font-size: 12px;
+  font-weight: 500;
+}
+.project-heading small {
+  font-size: 9px;
+  color: #868c7d;
+}
+.history-controls {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+.history-controls .button {
+  background: transparent;
+  border-color: transparent;
+}
+.phase-badge {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  border: 1px solid #d1d8c5;
+  border-radius: 4px;
+  padding: 8px 10px;
+  color: #77836a;
+}
+.workspace-main {
+  height: calc(100dvh - 78px);
+}
+.workspace-layout {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr) 295px;
+}
+.editor-panel {
+  background: #fafaf6;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c5ccba transparent;
+}
+.rooms-panel {
+  border-right: 1px solid #dce0d4;
+}
+.inspector-panel {
+  border-left: 1px solid #dce0d4;
+}
+.panel-heading {
+  padding: 30px 22px 24px;
+  border-bottom: 1px solid #e1e4d8;
+}
+.panel-heading .eyebrow {
+  font-size: 8px;
+  color: #7c886c;
+  letter-spacing: 0.13em;
+  margin-bottom: 15px;
+}
+.panel-heading h2 {
+  font-size: 28px;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  margin: 0 0 12px;
+}
+.panel-heading p {
+  font-size: 11px;
+  color: #818975;
+  line-height: 1.8;
+  margin: 0;
+}
+.panel-section {
+  padding: 23px 20px;
+  border-bottom: 1px solid #e1e4d8;
+}
+.panel-section h3 {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  margin: 0 0 14px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.editor-help {
+  font-size: 10px;
+  color: #858d79;
+  line-height: 1.75;
+  margin: 11px 0 0;
+}
+.editor-field-label {
+  display: block;
+  font-size: 10px;
+  margin-bottom: 9px;
+  color: #6e785f;
+}
+.editor-panel select {
+  width: 100%;
+  min-height: 39px;
+  border: 1px solid #d8ddcd;
+  background: #fffefa;
+  border-radius: 4px;
+  padding: 8px 9px;
+  color: #505d42;
+  font-size: 10px;
+  max-width: 100%;
+}
+.editor-panel select:focus-visible,
+.dimension-inputs input:focus-visible {
+  outline: 2px solid #829069;
+  outline-offset: 2px;
+}
+.create-room {
+  margin-top: 12px;
+  width: 100%;
+  font-size: 10px;
+  min-height: 39px;
+  gap: 8px;
+  padding: 8px;
+}
+.element-list {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.element-list li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 4px 0;
+}
+.element-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
+  font-size: 11px;
+  text-align: left;
+  color: #707c60;
+  min-height: 38px;
+}
+.element-select[aria-pressed='true'] {
+  border-color: #d0d9c2;
+  background: #e8eddf;
+  color: #465638;
+}
+.element-marker {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #96a085;
+  border-radius: 2px;
+}
+.floor-marker {
+  transform: rotate(-20deg) skew(10deg);
+}
+.element-visibility {
+  height: 34px;
+  width: 30px;
+  background: transparent;
+  border: 0;
+  display: grid;
+  place-items: center;
+  color: #929b83;
+}
+.element-select:hover,
+.element-visibility:hover {
+  background: #edf0e5;
+}
+.next-phase-note {
+  padding: 30px 22px 20px;
+  color: #88937b;
+}
+.next-phase-note h3 {
+  font-size: 20px;
+  font-family: Georgia, serif;
+  margin: 18px 0 12px;
+}
+.next-phase-note p {
+  font-size: 11px;
+  line-height: 1.9;
+  margin: 0;
+}
+.room-scale-note {
+  padding: 20px 22px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  color: #89957a;
+}
+.room-name {
+  padding: 0 22px 25px;
+}
+.workspace-center {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.workspace-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background: #f8f9f2;
+  border-bottom: 1px solid #dce0d4;
+  gap: 14px;
+  flex-wrap: wrap;
+  min-height: 65px;
+}
+.editor-segment {
+  display: flex;
+  border: 1px solid #d6ddc9;
+  border-radius: 4px;
+  padding: 3px;
+  background: #e9eddf;
+  gap: 2px;
+}
+.editor-segment button {
+  font-size: 10px;
+  background: transparent;
+  border: 0;
+  border-radius: 2px;
+  color: #7f8b70;
+  padding: 8px 10px;
+  min-height: 31px;
+  white-space: nowrap;
+}
+.editor-segment button[aria-pressed='true'] {
+  background: #fffef8;
+  color: #435436;
+  box-shadow: 0 1px 3px #0000000d;
+}
+.toolbar-tools {
+  display: flex;
+  gap: 3px;
+  margin-left: auto;
+}
+.toolbar-tools .button {
+  background: transparent;
+  border-color: transparent;
+  min-height: 32px;
+  width: 32px;
+  padding: 6px;
+  color: #8b967c;
+}
+.toolbar-tools .button[aria-pressed='true'] {
+  background: #e3ead5;
+  color: #526342;
+}
+.units-control {
+  margin-left: auto;
+}
+.units-control button {
+  padding: 6px 8px;
+  min-height: 27px;
+  font-size: 9px;
+}
+.editor-viewport {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  min-height: 330px;
+  background: #e8e9e1;
+  overflow: hidden;
+}
+.editor-viewport > div:has(canvas) {
+  height: calc(100% - 90px) !important;
+  position: absolute !important;
+  inset: 0;
+}
+.editor-viewport canvas {
+  display: block;
+}
+.viewport-caption {
+  position: absolute;
+  top: 25px;
+  left: 24px;
+  z-index: 12;
+  pointer-events: none;
+}
+.viewport-caption .eyebrow {
+  font-size: 8px;
+  color: #8b947e;
+  margin-bottom: 9px;
+  letter-spacing: 0.12em;
+}
+.viewport-caption > span {
+  font-size: 11px;
+  color: #657455;
+}
+.viewport-navigation {
+  position: absolute;
+  bottom: 42px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 3px;
+  background: #f5f7edc9;
+  padding: 5px;
+  border: 1px solid #d5dcc6;
+  border-radius: 5px;
+  z-index: 12;
+}
+.viewport-navigation .button {
+  min-height: 31px;
+  width: 30px;
+  background: transparent;
+  border-color: transparent;
+  color: #758464;
+  padding: 6px;
+}
+.viewport-navigation .button:hover {
+  background: #dfe8d3;
+}
+.viewport-hint {
+  position: absolute;
+  bottom: 13px;
+  left: 15px;
+  right: 15px;
+  text-align: center;
+  color: #8a947d;
+  font-size: 9px;
+  pointer-events: none;
+  margin: 0;
+  z-index: 12;
+}
+.dimension-tag {
+  background: #fafcf4ed;
+  color: #556346;
+  white-space: nowrap;
+  padding: 5px 8px;
+  border: 1px solid #ccd7bd;
+  border-radius: 3px;
+  font-size: 10px;
+  box-shadow: 0 2px 4px #00000006;
+  display: block;
+}
+.workspace-status {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  border-top: 1px solid #dce0d4;
+  background: #f7f8ef;
+  font-size: 9px;
+  color: #7d8c6c;
+  min-height: 40px;
+}
+.workspace-status > span:last-child {
+  margin-left: auto;
+  font-size: 8px;
+  color: #929c84;
+}
+.status-dot {
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  background: #8b9b76;
+}
+.inspector-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 11px;
+  gap: 10px;
+}
+.inspector-label h3 {
+  margin: 0;
+}
+.inspector-label > span {
+  font-size: 8px;
+  color: #98a38a;
+  letter-spacing: 0.05em;
+}
+.dimension-form > .editor-help {
+  font-size: 9px;
+  margin: 10px 0 18px;
+}
+.dimension-field {
+  padding: 0;
+  border: 0;
+  margin: 17px 0 0;
+  min-width: 0;
+}
+.dimension-field legend {
+  font-size: 10px;
+  margin-bottom: 9px;
+  color: #6e7e5e;
+  padding: 0;
+}
+.dimension-inputs {
+  display: flex;
+  gap: 8px;
+}
+.dimension-inputs label {
+  display: flex;
+  align-items: center;
+  background: #f0f3e7;
+  border: 1px solid #dce3ce;
+  border-radius: 3px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+.dimension-inputs input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 9px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  color: #586948;
+  line-height: 1.2;
+  min-height: 39px;
+}
+.dimension-inputs label > span:not(.sr-only) {
+  font-size: 10px;
+  color: #99a68a;
+  padding-right: 9px;
+}
+.dimension-field small {
+  display: block;
+  font-size: 8px;
+  color: #99a48c;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.apply-dimensions {
+  width: 100%;
+  min-height: 38px;
+  font-size: 10px;
+  padding: 9px;
+  margin-top: 10px;
+}
+.editor-error {
+  font-size: 10px;
+  color: #974b38;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+.editor-error:empty {
+  margin: 0;
+}
+.material-fields .editor-field-label {
+  margin-top: 17px;
+}
+.material-select {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.material-select > span {
+  width: 30px;
+  height: 32px;
+  border: 1px solid #c9cfbf;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.material-select > select {
+  flex: 1;
+  min-width: 0;
+}
+.material-fields .editor-help {
+  font-size: 9px;
+}
+.room-facts dl {
+  font-size: 10px;
+  margin: 0;
+}
+.room-facts dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  border-top: 1px solid #e4e9d8;
+  padding: 12px 0;
+}
+.room-facts dt {
+  color: #97a18b;
+}
+.room-facts dd {
+  margin: 0;
+  color: #6a7b57;
+  text-align: right;
+}
+.room-facts .editor-help {
+  font-size: 9px;
+}
+.editor-fallback {
+  z-index: 13;
+  background: #e8e9e1;
+}
+.editor-fallback h2 {
+  font-size: 28px;
+  margin: 0;
+}
+.editor-fallback p {
+  font-size: 12px;
+  max-width: 340px;
+  color: #7d8b6c;
+}
+.editor-fallback .button {
+  font-size: 11px;
+}
+.mobile-panel-switch {
+  display: none;
+}
+@media (max-width: 1230px) and (min-width: 761px) {
+  .workspace-layout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+  .workspace-center {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .editor-panel {
+    grid-row: 1;
+    grid-column: 2;
+    border-left: 1px solid #dce0d4;
+    border-right: 0;
+  }
+  .rooms-panel {
+    display: none;
+  }
+  .mobile-panel-room .rooms-panel {
+    display: block;
+  }
+  .mobile-panel-room .inspector-panel {
+    display: none;
+  }
+  .mobile-panel-switch {
+    display: flex;
+    gap: 8px;
+    position: fixed;
+    right: 12px;
+    top: 20px;
+    z-index: 20;
+  }
+  .mobile-panel-switch .button {
+    min-height: 34px;
+    padding: 7px 10px;
+    font-size: 10px;
+  }
+  .workspace-header {
+    padding-right: 260px;
+  }
+  .phase-badge {
+    display: none;
+  }
+  .workspace-toolbar {
+    gap: 8px;
+  }
+  .workspace-toolbar .toolbar-tools {
+    margin-left: 0;
+  }
+  .viewport-navigation .button {
+    width: 28px;
+  }
+}
+@media (max-width: 760px) {
+  .workspace-header {
+    height: 76px;
+    padding: 0 16px;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .workspace-header .brand {
+    font-size: 23px;
+    gap: 5px;
+  }
+  .workspace-header .brand svg {
+    width: 23px;
+  }
+  .project-heading {
+    padding-left: 13px;
+    gap: 5px;
+  }
+  .project-heading > span {
+    font-size: 10px;
+  }
+  .project-heading small {
+    font-size: 8px;
+  }
+  .history-controls {
+    gap: 0;
+  }
+  .history-controls .button {
+    width: 30px;
+    padding: 5px;
+  }
+  .phase-badge {
+    display: none;
+  }
+  .workspace-main {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .workspace-layout {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .workspace-center {
+    order: 0;
+  }
+  .editor-viewport {
+    height: 440px;
+    flex: none;
+    min-height: 0;
+  }
+  .workspace-toolbar {
+    padding: 10px 12px;
+    gap: 8px;
+    min-height: 0;
+  }
+  .editor-segment button {
+    font-size: 9px;
+    padding: 7px 8px;
+  }
+  .toolbar-tools {
+    margin-left: auto;
+  }
+  .toolbar-tools .button {
+    width: 28px;
+    min-height: 30px;
+    padding: 5px;
+  }
+  .units-control {
+    margin-left: 0;
+  }
+  .units-control button {
+    padding: 5px 8px;
+    font-size: 9px;
+    min-height: 25px;
+  }
+  .viewport-caption {
+    top: 18px;
+    left: 16px;
+  }
+  .viewport-caption .eyebrow {
+    font-size: 7px;
+    letter-spacing: 0.08em;
+  }
+  .viewport-caption > span {
+    font-size: 10px;
+  }
+  .viewport-navigation {
+    gap: 1px;
+    padding: 3px;
+    bottom: 40px;
+  }
+  .viewport-navigation .button {
+    width: 30px;
+    min-height: 31px;
+    padding: 6px;
+  }
+  .viewport-hint {
+    font-size: 8px;
+    bottom: 15px;
+  }
+  .dimension-tag {
+    font-size: 8px;
+    padding: 4px 5px;
+  }
+  .workspace-status {
+    padding: 12px;
+    font-size: 9px;
+  }
+  .workspace-status > span:last-child {
+    margin-left: 0;
+    width: 100%;
+    padding-left: 11px;
+    font-size: 8px;
+  }
+  .mobile-panel-switch {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    order: -1;
+    background: #f1f4e8;
+    border-bottom: 1px solid #dce0d4;
+  }
+  .mobile-panel-switch .button {
+    font-size: 10px;
+    padding: 8px 13px;
+    min-height: 34px;
+    flex: 1;
+  }
+  .editor-panel {
+    order: 1;
+    overflow: visible;
+    border: 0;
+    border-top: 1px solid #dce0d4;
+  }
+  .rooms-panel {
+    display: none;
+  }
+  .mobile-panel-room .rooms-panel {
+    display: block;
+  }
+  .mobile-panel-room .inspector-panel {
+    display: none;
+  }
+  .panel-heading {
+    padding: 25px 20px;
+  }
+  .panel-heading h2 {
+    font-size: 27px;
+  }
+  .panel-section {
+    padding: 22px 20px;
+  }
+  .editor-field-label,
+  .panel-section h3 {
+    font-size: 12px;
+  }
+  .editor-panel select {
+    font-size: 12px;
+    min-height: 42px;
+  }
+  .editor-help {
+    font-size: 11px;
+  }
+  .dimension-field legend {
+    font-size: 12px;
+  }
+  .dimension-field small {
+    font-size: 10px;
+  }
+  .dimension-form > .editor-help {
+    font-size: 10px;
+  }
+  .dimension-inputs input {
+    font-size: 14px;
+    min-height: 43px;
+  }
+  .apply-dimensions {
+    min-height: 42px;
+    font-size: 12px;
+  }
+  .room-facts dl {
+    font-size: 12px;
+  }
+  .next-phase-note {
+    padding-top: 25px;
+  }
+  .create-room {
+    min-height: 42px;
+    font-size: 12px;
+  }
+}
+@media (max-width: 385px) {
+  .workspace-header {
+    gap: 10px;
+    padding-inline: 12px;
+  }
+  .project-heading {
+    padding-left: 10px;
+  }
+  .project-heading small {
+    font-size: 7px;
+  }
+  .history-controls .button {
+    width: 27px;
+  }
+  .workspace-header .brand {
+    font-size: 21px;
+  }
+  .workspace-header .brand svg {
+    width: 21px;
+  }
+  .workspace-toolbar {
+    column-gap: 4px;
+  }
+  .toolbar-tools {
+    gap: 0;
+  }
+  .toolbar-tools .button {
+    width: 27px;
+  }
+}
