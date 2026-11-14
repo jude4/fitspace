@@ -2,33 +2,33 @@
 
 ## Current phase
 
-Phase 0 — complete. Await explicit user approval before Phase 1. No application code exists.
+Phase 1 — foundation, design system, and landing page implemented. Phase 2 is next and requires explicit approval. The current user request authorized Phase 1; no later phase has been started.
 
 ## Completed
 
-- Inspected the selected `jude4/fitspace` repository: initial HEAD `a420eafd3c4e5c8e9f164179c33827e41d65ac9f` contained only an empty README; no existing app, manifests, tests, or agent instructions.
-- Prior onboarding verified authenticated read access to `main`, matching checkout commit, clean worktree, and Git integrity.
-- Defined product scope, MVP, later launch scope, primary journeys, and visual direction informed by supplied references.
-- Specified stack boundaries, proposed folders, meter-based geometry, per-axis measurement provenance, versioned scenes, product/asset revisions, command history, persistence and conflicts.
-- Designed database relationships, authorization/RLS expectations, read-only sharing, asset handling, spatial limitations, and performance targets.
-- Created all required documentation and measurable gates for Phases 0–9.
-
-## Pending
-
-All implementation begins in Phase 1 after approval. Later phases require their own approval and verification. No packages have been selected/installed, no schemas or migrations executed, and no UI or renderer validated.
-
-## Known issues and risks
-
-- Photorealistic quality needs licensed optimized assets, lighting work, and measured GPU performance; supplied reference images are not assumed licensed for distribution.
-- Framework/React/R3F/Drei compatibility remains to be verified from official sources before installation.
-- Single-image reconstruction and simplified bounds cannot establish exact dimensions or delivery feasibility.
-- Supabase integration, real AR devices/HTTPS, AI provider configuration, retailer assets, Stripe test credentials, and production operations are future prerequisites, not Phase 0 blockers.
-- Performance budgets have not been measured. No production-readiness claim is made.
+- Phase 0 architecture, product vision, data/measurement conventions, roadmap, and acceptance gates retained.
+- Verified official framework/renderer compatibility, pinned tooling/dependencies, and added a reproducible pnpm lockfile. Strict TypeScript, Tailwind, shared shadcn-style primitives, Lucide, and Zustand are configured.
+- Built the responsive landing page, concept collection, feature/process sections, professional vision, footer, navigation, loading/error boundaries, and clear upcoming-feature routes for workspace/projects/business.
+- Added a lazy-loaded original procedural Three.js living room: floor/walls/window structure, furniture, PBR materials, lighting, hardware-path shadows, orbit/zoom, front view/reset, slow opt-in motion, before/after furnishing, and three live material palettes.
+- Added reduced-motion support, offscreen animation pause, responsive framing, WebGL capability/context-loss fallbacks, demand rendering, simplified structural geometry, and software/low-core quality reduction.
+- Added unit/component/browser tests, formatting/lint checks, and a reproducible performance sampling script. Reviewed desktop and mobile screenshots.
+- Fixed issues found by verification: camera tuple typing, WebGL detection lifecycle, lint-tool peer conflicts, camera reset falsely triggering context-loss fallback, and mobile room cropping.
 
 ## Verification
 
-See [TESTING.md](TESTING.md) for completed documentation checks and intentionally unrun application checks.
+See [TESTING.md](TESTING.md) for exact results and limitations; [DEPENDENCIES.md](DEPENDENCIES.md) records compatibility sources and the supported direct ESLint plugin configuration. Current environment needs no credentials for Phase 1.
+
+## Known limitations
+
+- Room editor, product catalog/placement, fit analysis, local/cloud saving, accounts, AR, AI, retailers, and billing remain future phases. Upcoming-feature pages explicitly disclose this.
+- Demo geometry and CSS concepts are original stylized samples, not photorealistic captures or manufacturer products. No reference images are redistributed.
+- Chromium software-rendered browser coverage does not prove physical-device FPS, Safari/Firefox behavior, mobile touch feel, or production readiness. Physical integrated-GPU performance remains unverified.
+- All scene edits in this phase are ephemeral demo UI state. There is no saving or user data.
 
 ## Next recommended task
 
-After explicit approval, execute Phase 1 in small steps: verify official compatibility guidance; pin tooling and dependencies; initialize the app and checks; build the design system, responsive landing and lightweight interactive room; verify runtime/UI/build; update docs and stop before Phase 2.
+After approval, implement Phase 2 only: canonical rectangular-room data, metric/imperial dimension inputs and validation, room materials, perspective/overhead cameras and framing, element selection, visibility/grid controls, undo/redo, workspace panels, and meaningful geometry/history/browser tests. Reuse the existing shell, UI, rendering boundaries, and conventions rather than rebuilding working landing functionality.
+
+## Reusable cloud configuration
+
+Saved `install_script` (frozen install and peer check) and `start_skill` (working directory, environment initialization, development startup, runtime and browser checks). Draft persistence is confirmed. It has not been published or independently restored in a fresh task; review/save in environment settings and publish when desired.
