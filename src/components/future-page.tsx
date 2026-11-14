@@ -42,7 +42,8 @@ export function FuturePage({
           </Button>
         </div>
         <p className="quiet-note">
-          No signup, cloud saving, or furniture editing is available yet.
+          Accounts and cloud saving are not available yet. The guest room and
+          sample furniture editor are available now.
         </p>
       </main>
     </>

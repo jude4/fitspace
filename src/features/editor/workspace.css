@@ -807,3 +807,354 @@
     width: 27px;
   }
 }
+/* Catalog and furniture extend the existing measured-room workspace. */
+.inspector-stack {
+  overflow: auto;
+  background: #fafaf6;
+  min-width: 0;
+  scrollbar-width: thin;
+}
+.inspector-stack > .inspector-panel {
+  overflow: visible;
+  border: 0;
+}
+.scene-storage {
+  padding: 18px 20px;
+  border-left: 1px solid #dce0d4;
+  border-top: 1px solid #dce0d4;
+  background: #f3f5eb;
+}
+.storage-tools {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.storage-tools .button {
+  font-size: 10px;
+  padding: 8px 10px;
+  min-height: 34px;
+}
+.storage-recovery {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #7b5e42;
+}
+.storage-recovery .button {
+  white-space: normal;
+  text-align: left;
+  font-size: 10px;
+  margin: 4px 0;
+  width: 100%;
+  min-height: 35px;
+  padding: 8px;
+}
+.catalog-panel > input {
+  width: 100%;
+  border: 1px solid #d7ddcb;
+  background: #fffefa;
+  border-radius: 4px;
+  padding: 10px;
+  font: inherit;
+  font-size: 11px;
+  color: #4d5e3d;
+}
+.catalog-panel .editor-field-label {
+  margin-top: 14px;
+}
+.catalog-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 12px;
+}
+.catalog-filters > label {
+  font-size: 9px;
+  color: #8a957a;
+}
+.catalog-filters select {
+  margin-top: 7px;
+  padding: 7px;
+  font-size: 9px;
+}
+.catalog-count {
+  font-size: 9px;
+  color: #929d81;
+  margin: 14px 0 10px;
+}
+.catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.catalog-card {
+  padding: 0 0 10px;
+  background: #edf0e5;
+  border: 1px solid #dce1d1;
+  border-radius: 4px;
+  text-align: left;
+  overflow: hidden;
+  min-width: 0;
+  transition: background 0.15s;
+}
+.catalog-card:hover {
+  background: #e0e7d2;
+}
+.catalog-card svg {
+  width: 100%;
+  height: auto;
+}
+.catalog-card strong,
+.catalog-card small,
+.catalog-card > span {
+  display: block;
+  margin-inline: 8px;
+}
+.catalog-card strong {
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.catalog-card small {
+  font-size: 8px;
+  color: #859373;
+  margin-top: 6px;
+}
+.catalog-card > span {
+  font-size: 8px;
+  color: #64794e;
+  margin-top: 8px;
+}
+.product-dialog {
+  border: 1px solid #c9d3b8;
+  border-radius: 8px;
+  background: #fafbf5;
+  color: #45543a;
+  width: min(560px, calc(100% - 32px));
+  max-height: 90dvh;
+  padding: 30px;
+  box-shadow: 0 18px 80px #1f2b2033;
+}
+.product-dialog::backdrop {
+  background: #24312188;
+  backdrop-filter: blur(3px);
+}
+.product-dialog h2 {
+  font-size: 38px;
+  letter-spacing: -0.04em;
+  margin-bottom: 20px;
+}
+.product-dialog .eyebrow {
+  font-size: 8px;
+  margin-bottom: 12px;
+}
+.dialog-close {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  background: transparent;
+  border: 0;
+  color: #6a785c;
+  font-size: 28px;
+  min-width: 36px;
+  min-height: 36px;
+}
+.product-live-preview {
+  height: 260px;
+  background: #e9eade;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.product-live-preview p {
+  padding: 30px;
+  font-size: 13px;
+}
+.product-dialog p {
+  font-size: 12px;
+  color: #7c896c;
+}
+.product-dialog .sample-dimensions {
+  font-weight: 500;
+  color: #536a3e;
+}
+.product-dialog > .button {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 12px;
+}
+.transform-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 15px;
+}
+.transform-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 9px;
+  color: #758664;
+  min-width: 0;
+}
+.transform-field input {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid #dce3ce;
+  background: #f0f3e7;
+  border-radius: 4px;
+  padding: 10px;
+  color: #536940;
+  font: inherit;
+  font-size: 12px;
+  min-height: 39px;
+}
+.transform-field input:focus-visible {
+  outline: 2px solid #829069;
+  outline-offset: 2px;
+}
+.furniture-transform > h3:not(:first-child) {
+  margin-top: 25px;
+}
+.object-dimensions {
+  font-size: 10px;
+  margin-block: 18px;
+}
+.object-dimensions > div {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #e0e6d4;
+  padding: 8px 0;
+  gap: 10px;
+}
+.object-dimensions dt {
+  text-transform: capitalize;
+  color: #8c997b;
+}
+.object-dimensions dd {
+  margin: 0;
+  text-align: right;
+  color: #647c4c;
+}
+.furniture-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.furniture-actions .button {
+  font-size: 10px;
+  min-height: 35px;
+  padding: 8px 10px;
+}
+.editor-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #7c8b6c;
+  margin: 14px 0;
+  line-height: 1.5;
+}
+.editor-checkbox input {
+  accent-color: #637d4a;
+}
+.editor-checkbox + .editor-field-label {
+  margin-top: 22px;
+}
+@media (max-width: 1230px) and (min-width: 761px) {
+  .inspector-stack {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .inspector-stack .inspector-panel {
+    display: block !important;
+  }
+  .mobile-panel-room .inspector-stack {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .inspector-stack {
+    order: 1;
+    overflow: visible;
+  }
+  .mobile-panel-room .inspector-stack {
+    display: none;
+  }
+  .inspector-stack .inspector-panel {
+    display: block;
+  }
+  .catalog-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .catalog-card strong {
+    font-size: 11px;
+  }
+  .catalog-card small,
+  .catalog-card > span {
+    font-size: 9px;
+  }
+  .catalog-filters label {
+    font-size: 11px;
+  }
+  .catalog-filters select {
+    font-size: 12px;
+  }
+  .catalog-panel > input {
+    font-size: 13px;
+    min-height: 42px;
+  }
+  .transform-field {
+    font-size: 11px;
+  }
+  .transform-field input {
+    font-size: 14px;
+    min-height: 42px;
+  }
+  .object-dimensions {
+    font-size: 11px;
+  }
+  .editor-checkbox {
+    font-size: 12px;
+  }
+  .storage-tools .button {
+    font-size: 11px;
+    min-height: 38px;
+  }
+  .project-heading small {
+    font-size: 8px;
+  }
+}
+.room-panel-nav {
+  display: flex;
+  gap: 5px;
+  position: sticky;
+  top: 0;
+  background: #f5f7ed;
+  padding: 9px 12px;
+  border-bottom: 1px solid #dce0d4;
+  z-index: 15;
+}
+.room-panel-nav button {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #d6dec9;
+  border-radius: 3px;
+  color: #6a8054;
+  font-size: 9px;
+  padding: 8px 4px;
+  min-height: 32px;
+}
+.room-panel-nav button:hover {
+  background: #e4ecd9;
+}
+.catalog-panel,
+.rooms-panel #room-controls {
+  scroll-margin-top: 60px;
+}
+@media (min-width: 761px) {
+  .workspace-shell {
+    height: 100dvh;
+    overflow: hidden;
+  }
+}

@@ -46,3 +46,13 @@ Revisit decisions with evidence and record supersession; do not silently change 
 ## Vercel output repair
 
 - **D31:** Override the mistaken static-site output configuration with root `vercel.json` (`framework: nextjs`, `outputDirectory: .next`). Keep the existing Next.js build and rendering model; prerendered routes do not require `output: export`. Verified Vercel's official Next.js builder uses `config.outputDirectory || '.next'`. This does not authorize unrelated Phase 9 implementation.
+
+## Phase 3 — 2026-11-14
+
+- **D32:** Implement the approved catalog/placement/local-save phase only. Phase 4 owns collision, clearance, and delivery limitations; do not present snapping as proof of fit.
+- **D33:** Use nine original procedural concepts with complete sample dimensions, explicit revision pins, variant IDs, and licensed original geometry. Do not invent real retailer metadata or scrape commercial models. SVG illustrations and live 3D previews share recipes and physical proportions.
+- **D34:** Unify room/placement history using immutable scene snapshots. Draft dragging does not enter history or storage; release commits one validated edit and cancellation restores the prior scene. Room recreation can undo both room and furniture changes.
+- **D35:** Allow shelf/desk width adjustment only within declared sample ranges; fixed concepts cannot resize. Numeric coordinates remain exact while optional grid/wall snapping applies to drag/drop. Both mechanisms share the same meter-based model.
+- **D36:** Persist schema 1 locally after hydration, with a 350 ms debounce, actual acknowledgement, revision validation, 100-object/1 MiB limits, and import/export. Preserve corrupt/future saved data until explicit replacement; never silently reset it to a default scene.
+- **D37:** Provide failure recovery for storage quota/permissions, graphics, invalid imports, and common cross-tab changes. LocalStorage detection is not collaborative locking; cloud ownership/version conflict handling still belongs to Phase 5.
+- **D38:** Keep sample dimension provenance/uncertainty through serialization. Guest imports cannot assert manufacturer verification; a real verifier/merchant authority is not implemented yet. Product revisions and normalized shape envelopes are tested.

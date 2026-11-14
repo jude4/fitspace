@@ -7,9 +7,14 @@ import { useEditorStore } from './editor-store';
 import { RoomPanel, Inspector } from './room-panels';
 import { HistoryControls, WorkspaceToolbar } from './workspace-toolbar';
 import { EditorViewport } from './editor-viewport';
+import { FurnitureInspector } from './furniture-inspector';
+import { useLocalScene } from './local-scene';
+import { SceneStorageControls } from './scene-storage-controls';
 import './workspace.css';
 export function Workspace() {
-  const { room, units, undo, redo, announcement } = useEditorStore();
+  const { room, units, undo, redo, announcement, selectedPlacementId } =
+    useEditorStore();
+  const storage = useLocalScene();
   const [panel, setPanel] = useState<'room' | 'properties'>('properties');
   useEffect(() => {
     function key(event: KeyboardEvent) {
@@ -35,15 +40,24 @@ export function Workspace() {
     return () => window.removeEventListener('keydown', key);
   }, [undo, redo]);
   return (
-    <div className="workspace-shell">
+    <div className="workspace-shell" inert={storage.status === 'loading'}>
       <header className="workspace-header">
         <Brand />
         <div className="project-heading">
           <span>{room.name}</span>
-          <small>Guest workspace · Not saved</small>
+          <small data-testid="save-status" role="status" aria-live="polite">
+            Guest ·{' '}
+            {storage.status === 'saved'
+              ? 'Saved on this device'
+              : storage.status === 'saving'
+                ? 'Saving…'
+                : storage.status === 'loading'
+                  ? 'Loading…'
+                  : 'Not saved locally'}
+          </small>
         </div>
         <HistoryControls />
-        <span className="phase-badge">ROOM BUILDER</span>
+        <span className="phase-badge">ROOM & FURNITURE</span>
       </header>
       <main id="main" className="workspace-main">
         <h1 className="sr-only">FitSpace room builder</h1>
@@ -87,10 +101,15 @@ export function Workspace() {
                 )}{' '}
                 interior floor area
               </span>
-              <span>Edits stay in this tab. Refresh resets the room.</span>
+              <span>
+                Local device save only · No cloud sync or fit analysis
+              </span>
             </div>
           </section>
-          <Inspector />
+          <div className="inspector-stack">
+            {selectedPlacementId ? <FurnitureInspector /> : <Inspector />}
+            <SceneStorageControls storage={storage} />
+          </div>
         </div>
       </main>
     </div>

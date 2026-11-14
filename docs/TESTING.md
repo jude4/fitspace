@@ -116,3 +116,37 @@ Physical-GPU frame rates and cross-browser/mobile-device behavior remain unverif
 ## Vercel output-directory repair
 
 `pnpm build` passed after adding `vercel.json`. Verified its `nextjs` framework and `.next` output match generated `.next/BUILD_ID` and prerendered home/workspace HTML artifacts. `git diff --check` passed. No application logic changed, so unit/E2E suites were not repeated for this configuration-only fix. The native Vercel builder's official source confirms its `.next` default; actual deployment in the user's Vercel project remains unverified.
+
+## Phase 3 actual results — 2026-11-14
+
+The existing pinned Node/pnpm/Linux/Chromium toolchain is unchanged. No new dependencies, external assets, or credentials are required.
+
+| Check                                                                                                   | Result                                                                   |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `pnpm typecheck`                                                                                        | Passed, strict TypeScript                                                |
+| `pnpm lint`                                                                                             | Passed                                                                   |
+| `pnpm test`                                                                                             | 52 passed across 8 files                                                 |
+| `pnpm format:check`                                                                                     | Passed                                                                   |
+| `pnpm build`                                                                                            | Passed; existing routes retained                                         |
+| `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium pnpm test:e2e`                                   | 24 passed: 9 furniture/storage cases plus 15 retained landing/room cases |
+| Focused `... pnpm exec playwright test tests/e2e/furniture.spec.ts` after final preview recovery checks | 9 passed                                                                 |
+| Development `/workspace` request                                                                        | Passed; catalog and export controls rendered                             |
+| Required documentation, local links, `git diff --check`                                                 | Passed                                                                   |
+
+### Meaningful coverage
+
+- All nine categories have complete positive sample dimensions, supported asset revisions/variants, and original procedural recipes. Recipe extents occupy the expected bottom-center normalized envelope. Preview and rendered placement scales use physical dimensions; thumbnails use the same proportions.
+- Search combines text/category/material filters, including genuine empty results. Browser tests open live previews and add every sample asset.
+- Numeric transforms and yaw preserve meter/radian precision. Fixed concepts cannot resize or acquire altered sample dimensions; permitted shelf/desk widths validate ranges and provenance. Unknown variants/revisions, nonfinite transforms, invalid room links, duplicate IDs, oversized files/scenes, unsupported versions, and corrupt data fail validation.
+- Rotated planar extents drive wall alignment. Grid/near-wall snapping is deterministic. Physical mouse dragging changes the saved position, remains one undo step, and can redo without deleting the object. Draft updates/cancellation do not create scene history. Native catalog DataTransfer/drop events project through the current camera onto the floor and produce one undoable add.
+- Duplicate/delete and room recreation preserve reversible scene snapshots and revision pins. Imports validate before replacing; valid imports undo and invalid imports leave the design unchanged.
+- Local persistence hydrates before subscription/autosave, then acknowledges only after a successful write. Exact placement coordinates/rotations, sizes, variants, source/uncertainty/evidence, and asset/product revisions survive JSON round trips/reload.
+- Storage tests simulate quota failures and incompatible/future data. In-memory edits survive errors; no false saved status is reported. The old raw data remains until explicit replacement and is downloadable unchanged. An exported in-memory backup contains the unsaved objects. A second real browser tab receives a storage event, pauses overwrites, and explicitly reloads the newer scene. This does not test or guarantee transactional simultaneous writes.
+- Graphics/context recovery remains available. A product-preview graphics loss displays a recovery message and supports close/reopen/Add; the primary editor's retained context-loss tests still pass. There are no remote model fetches to fail in this phase; arbitrary imported asset IDs are rejected, not loaded. Remote GLB/merchant ingestion is not claimed.
+- Desktop/mobile catalog and furniture inspector controls remain reachable; viewport layouts stay within 360/768/1440 px. Modal focus is restored, keyboard users can add/select/edit without dragging, and existing reduced-motion checks pass. Targeted accessibility coverage is not a complete audit or actual touch-device certification.
+
+Screenshot artifacts in ignored `test-results/` include product previews, the furnished desktop workspace, and the mobile furniture inspector. Visual review led to closer preview framing, a catalog shortcut, contextual object/room dimension labels to avoid overlap, and contained desktop panel scrolling. Procedural samples are deliberately labeled rather than presented as real retailer assets or photorealistic capture.
+
+Type/lint checks caught pointer-capture target typing and a mutable declaration; both were corrected. All implemented assertions remain enabled. Browser checks reported no errors in the primary furniture journey; expected storage/graphics failures were tested separately. No spatial-fit, auth, cloud, AR, AI, retailer, billing, live deployment, physical-GPU, or cross-browser functionality is claimed as tested in this phase.
+
+A final regression test additionally covers failed-save route re-entry: a quota failure leaves a newer 7 m in-memory room and an older 4 m stored copy. Unmounting and remounting under React Strict Mode retains the newer room and error status instead of hydrating the older copy. The tab-local retention marker is excluded from exports and history.

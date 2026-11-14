@@ -128,7 +128,8 @@ export default function Home() {
               </div>
               <p>
                 Explore the live demo, then create your own measured room.
-                Furniture placement and spatial analysis are next.
+                Arrange sample furniture in your measured room. Spatial analysis
+                is next.
               </p>
             </div>
             <ol className="steps">
@@ -157,7 +158,7 @@ export default function Home() {
                   Arrange furniture, inspect dimensions, and understand
                   potential overlaps. Useful guidance, with honest limitations.
                 </p>
-                <small>PLANNED · PLACEMENT & ANALYSIS</small>
+                <small>AVAILABLE · SAMPLE FURNITURE</small>
               </li>
             </ol>
           </div>

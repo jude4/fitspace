@@ -8,6 +8,24 @@ import {
   type Units,
 } from '@/domain/room';
 import type { EditorView } from '@/domain/room-camera';
+import { findProduct } from '@/domain/catalog';
+import {
+  createPlacement,
+  updatePlacement,
+  validatePlacement,
+  snapPosition,
+  MAX_PLACEMENTS,
+  type Placement,
+  type PlacementUpdate,
+  type Vec3,
+} from '@/domain/placements';
+import type { SceneDocument, SceneSnapshot } from '@/domain/scene-document';
+export type FurnitureCommand =
+  | { type: 'add'; productId: string; id: string; position?: Vec3 }
+  | { type: 'update'; id: string; update: PlacementUpdate }
+  | { type: 'delete'; id: string }
+  | { type: 'duplicate'; id: string; newId: string };
+
 export const HISTORY_LIMIT = 100;
 export type CameraAction =
   | 'zoom-in'
@@ -20,8 +38,24 @@ export type CameraAction =
   | 'rotate-right';
 type EditorState = {
   room: Room;
-  past: Room[];
-  future: Room[];
+  localSessionId: string | null;
+  placements: Placement[];
+  past: SceneSnapshot[];
+  future: SceneSnapshot[];
+  selectedPlacementId: string | null;
+  dragDraft: { id: string; position: Vec3 } | null;
+  snapGrid: boolean;
+  snapWalls: boolean;
+  showBounds: boolean;
+  selectPlacement: (id: string) => void;
+  furniture: (command: FurnitureCommand) => boolean;
+  beginDrag: (id: string) => void;
+  moveDrag: (position: Vec3) => void;
+  finishDrag: (cancel?: boolean) => void;
+  setSnapGrid: (value: boolean) => void;
+  setSnapWalls: (value: boolean) => void;
+  setShowBounds: (value: boolean) => void;
+  loadDocument: (document: SceneDocument, remember?: boolean) => void;
   error: string | null;
   announcement: string;
   selected: RoomElement | null;
@@ -47,6 +81,140 @@ type EditorState = {
 };
 export const useEditorStore = create<EditorState>((set, get) => ({
   room: createRoom(),
+  localSessionId: null,
+  placements: [],
+  selectedPlacementId: null,
+  dragDraft: null,
+  snapGrid: false,
+  snapWalls: true,
+  showBounds: true,
+  selectPlacement: (id) => {
+    if (get().placements.some((p) => p.id === id))
+      set({ selected: null, selectedPlacementId: id });
+  },
+  setSnapGrid: (snapGrid) => set({ snapGrid }),
+  setSnapWalls: (snapWalls) => set({ snapWalls }),
+  setShowBounds: (showBounds) => set({ showBounds }),
+  furniture: (command) => {
+    const state = get();
+    const placements = [...state.placements];
+    let selection = state.selectedPlacementId;
+    if (command.type === 'add') {
+      const product = findProduct(command.productId);
+      if (!product) {
+        set({ error: 'Unknown sample product.' });
+        return false;
+      }
+      const added = createPlacement(product, state.room, command.id);
+      placements.push(
+        command.position ? { ...added, position: command.position } : added,
+      );
+      selection = command.id;
+    } else {
+      const index = placements.findIndex((p) => p.id === command.id);
+      if (index < 0) {
+        set({ error: 'Select an existing furniture object.' });
+        return false;
+      }
+      const original = placements[index];
+      if (command.type === 'delete') {
+        placements.splice(index, 1);
+        selection = null;
+      } else if (command.type === 'duplicate') {
+        placements.push({
+          ...structuredClone(original),
+          id: command.newId,
+          position: {
+            ...original.position,
+            x: original.position.x + 0.25,
+            z: original.position.z + 0.25,
+          },
+        });
+        selection = command.newId;
+      } else placements[index] = updatePlacement(original, command.update);
+    }
+    if (
+      placements.length > MAX_PLACEMENTS ||
+      new Set(placements.map((p) => p.id)).size !== placements.length
+    ) {
+      set({ error: 'Scene limit reached or duplicate object ID.' });
+      return false;
+    }
+    for (const p of placements) {
+      const error = validatePlacement(p, state.room.id);
+      if (error) {
+        set({ error });
+        return false;
+      }
+    }
+    if (JSON.stringify(placements) === JSON.stringify(state.placements)) {
+      set({ error: null });
+      return true;
+    }
+    set({
+      placements,
+      past: [
+        ...state.past,
+        { room: state.room, placements: state.placements },
+      ].slice(-HISTORY_LIMIT),
+      future: [],
+      selected: null,
+      selectedPlacementId: selection,
+      error: null,
+      announcement: 'Furniture updated.',
+    });
+    return true;
+  },
+  beginDrag: (id) => {
+    const p = get().placements.find((p) => p.id === id);
+    if (p)
+      set({
+        selected: null,
+        selectedPlacementId: id,
+        dragDraft: { id, position: p.position },
+      });
+  },
+  moveDrag: (position) => {
+    const s = get(),
+      p = s.placements.find((p) => p.id === s.dragDraft?.id);
+    if (p)
+      set({
+        dragDraft: {
+          id: p.id,
+          position: snapPosition(p, position, s.room, s.snapGrid, s.snapWalls),
+        },
+      });
+  },
+  finishDrag: (cancel = false) => {
+    const draft = get().dragDraft;
+    set({ dragDraft: null });
+    if (draft && !cancel)
+      get().furniture({
+        type: 'update',
+        id: draft.id,
+        update: { position: draft.position },
+      });
+  },
+  loadDocument: (document, remember = false) => {
+    const s = get();
+    set({
+      room: document.room,
+      placements: document.placements,
+      units: document.displayUnits,
+      past: remember
+        ? [...s.past, { room: s.room, placements: s.placements }].slice(
+            -HISTORY_LIMIT,
+          )
+        : [],
+      future: [],
+      selected: 'floor',
+      selectedPlacementId: null,
+      dragDraft: null,
+      error: null,
+      resetKey: s.resetKey + 1,
+      announcement: 'Local scene loaded.',
+    });
+  },
   past: [],
   future: [],
   error: null,
@@ -89,35 +257,48 @@ export const useEditorStore = create<EditorState>((set, get) => ({
             ? 'Empty room created with sample dimensions.'
             : 'Room materials updated.',
       room: result.room,
-      past: [...current.past, current.room].slice(-HISTORY_LIMIT),
+      past: [
+        ...current.past,
+        { room: current.room, placements: current.placements },
+      ].slice(-HISTORY_LIMIT),
+      placements: command.type === 'create' ? [] : current.placements,
+      selectedPlacementId:
+        command.type === 'create' ? null : current.selectedPlacementId,
+      dragDraft: null,
       future: [],
       error: null,
     });
     return true;
   },
   undo: () => {
-    const { past, room, future } = get();
+    const { past, room, placements, future } = get();
     if (!past.length) return;
     set({
       announcement: 'Undid room edit.',
-      room: past[past.length - 1],
+      ...past[past.length - 1],
+      selectedPlacementId: null,
+      selected: 'floor',
+      dragDraft: null,
       past: past.slice(0, -1),
-      future: [room, ...future],
+      future: [{ room, placements }, ...future],
       error: null,
     });
   },
   redo: () => {
-    const { future, past, room } = get();
+    const { future, past, room, placements } = get();
     if (!future.length) return;
     set({
       announcement: 'Redid room edit.',
-      room: future[0],
-      past: [...past, room].slice(-HISTORY_LIMIT),
+      ...future[0],
+      selectedPlacementId: null,
+      selected: 'floor',
+      dragDraft: null,
+      past: [...past, { room, placements }].slice(-HISTORY_LIMIT),
       future: future.slice(1),
       error: null,
     });
   },
-  select: (selected) => set({ selected }),
+  select: (selected) => set({ selected, selectedPlacementId: null }),
   setUnits: (units) => set({ units }),
   setView: (view) => set({ view, cameraAction: null }),
   toggleElement: (element) =>

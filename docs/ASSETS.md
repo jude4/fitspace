@@ -9,3 +9,9 @@ Lucide icons use the installed package's ISC license. The shared Button follows 
 ## Phase 2
 
 The empty-room editor uses original box geometry and small deterministic grain/tile/noise textures generated in `src/scene/floor-texture.ts`. The 128 × 128 RGBA textures repeat over a two-meter surface span and are visual sample finishes, not material specifications from a manufacturer. No floor textures or models are downloaded. Dimension lines/labels use geometry and HTML rather than externally hosted fonts.
+
+## Phase 3
+
+Nine original sample furniture recipes live in `src/domain/catalog.ts`, rendered by `src/scene/furniture-model.tsx`. They cover sofa, chair, coffee table, bed, cabinet, shelf, desk, lamp, and a refrigerator volume. Bottom-center unit-envelope geometry is scaled using explicitly labeled sample dimensions; these are not real products, verified appliance specifications, or purchasable listings. The catalog's SVG illustrations use the same recipe extents; product dialogs provide actual interactive 3D previews at correct relative proportions.
+
+Each product pins revision 1 and a `procedural:<product-id>:1` asset ID. Retain old recipes when creating new revisions so saved dimensions/meshes do not silently change. There are no downloaded GLB files, copied photos, third-party product textures, remote model URLs, or merchant assets in this phase. Scene imports accept only supported revision IDs; unknown assets fail validation rather than loading arbitrary URLs.

@@ -1,6 +1,6 @@
 # Architecture
 
-Status: architecture baseline from Phase 0. Phases 1–2 implement the Next.js shell, shared UI, demo, measured rectangular-room domain commands, and workspace. Database, furniture placements, persistence, and integrations below remain future specifications. Exact installed versions and compatibility evidence are in [DEPENDENCIES.md](DEPENDENCIES.md).
+Status: architecture baseline from Phase 0. Phases 1–3 implement the shell/demo, measured rooms, sample catalog/placements, unified history, and versioned local persistence. Database/cloud persistence and advanced integrations remain future specifications. Exact installed versions and compatibility evidence are in [DEPENDENCIES.md](DEPENDENCIES.md).
 
 ## Stack and boundaries
 
@@ -49,7 +49,7 @@ Tests live at root `tests/unit`, `tests/component`, and `tests/e2e`, with fixtur
 - Bounds come from the authoritative physical dimensions in the product/placement record, not arbitrary decorative mesh extents. Distinguish visual mesh bounds from physical bounds. A model/metadata mismatch blocks verified-dimension claims until reviewed.
 - Tolerances: begin with 0.001 m numeric intersection tolerance; keep clearance guidelines independently configurable. Test boundary-touching, numerical precision, rotated objects, and missing data. Tolerance is not measurement accuracy.
 
-### Serializable scene contract (version 1 design)
+### Serializable guest scene contract (implemented version 1)
 
 ```ts
 type Vec3 = { x: number; y: number; z: number };
@@ -76,8 +76,9 @@ type Opening = {
 };
 type Room = {
   id: string;
+  name: string;
   dimensions: Dimensions;
-  openings: Opening[];
+  openings: []; // Schema 1 has no openings; Opening is a future design.
   wallMaterialId: string;
   floorMaterialId: string;
 };
@@ -94,12 +95,9 @@ type Placement = {
 };
 type SceneDocument = {
   schemaVersion: 1;
-  id: string;
-  title: string;
   room: Room;
   placements: Placement[];
   displayUnits: 'metric' | 'imperial';
-  walkingClearanceMeters: number;
 };
 ```
 
@@ -176,6 +174,8 @@ Thin structural shapes use simple boxes; upholstered shapes use modest rounded g
 
 ## Phase 2 implementation notes
 
+Historical state at Phase 2 completion; the Phase 3 notes below supersede the history/persistence details.
+
 - `src/domain/room.ts` defines the independent, serializable rectangular room, per-axis provenance, material IDs, presets, validation, commands, and six geometry descriptors. The implemented room has a guest ID/name and no openings. The broader versioned scene/placement contract above remains a future persistence design; it is not an implemented import API.
 - `src/domain/units.ts` handles explicit metric and feet/inches conversion; canonical values are never rewritten by display toggles. Dimension forms commit only edited axes, preserving full precision elsewhere. Unapplied form edits reset on a unit or canonical-dimension change; users are instructed to apply first.
 - `src/features/editor/editor-store.ts` holds the current room plus at most 100 prior snapshots. Valid dimension, material, and preset-creation commands are atomic and undoable. Invalid/no-op commands do not enter history; a valid new edit clears redo. Camera/navigation, units, visibility, grid, selection, and announcements are transient. No persistence is added before Phase 3.
@@ -187,3 +187,31 @@ Thin structural shapes use simple boxes; upholstered shapes use modest rounded g
 - The landing and editor share WebGL capability/quality detection, error boundaries, and context-loss lifecycle handling. Rendering remains on demand. Unsupported graphics retain numeric editing; retrying the renderer keeps the room store intact. Software rendering still cannot establish physical-device FPS.
 
 Measurement validity is not measurement accuracy: samples and user-entered dimensions remain labeled. This phase does not check collisions, delivery, real-world fit, doors, or accessibility compliance.
+
+## Phase 3 implementation notes
+
+### Catalog and assets
+
+`src/domain/catalog.ts` defines nine original sample concepts (one per required category), complete sample dimensions, material variants, allowed width ranges, immutable product revision 1, and exact procedural asset revision IDs. `furnitureParts` is the normalized bottom-center-pivot recipe shared by the renderer and illustrative SVG thumbnails. Real dimensions scale those recipes; previews retain physical aspect ratios. Fixed objects cannot scale; shelf/desk width changes must remain in declared ranges and are labeled user-adjusted. Keep old product/asset revision definitions when adding new revisions; never silently reinterpret saved revision 1.
+
+`src/features/catalog` owns filtering, cards, and a native modal with lazy 3D preview, focus restoration, loading/failure handling, sample details, and Add action. The scene has no remote asset requests; glTF uploads/merchant products are not implemented or claimed. Procedural geometry is disposed by R3F; preview/context errors remain recoverable without disabling numeric scene editing.
+
+### Placements and history
+
+`src/domain/placements.ts` owns immutable placements, revision/variant/size validation, yaw normalization, rotated planar extents, and deterministic snapping. Physical coordinates use bottom-center X/Z and floor Y=0. Positions must be finite within ±100 m; at most 100 placements are allowed. Rotation is radians internally and degrees in the UI. Bounds are a dimension envelope, not a mesh collision or delivery guarantee.
+
+The existing editor store now keeps `{room, placements}` snapshots in its bounded history. Room creation clears placements atomically and can be undone. Add/update/duplicate/delete commands validate before commit. Surface and furniture selections are mutually exclusive. Presentation state and temporary `dragDraft` remain outside persisted scene/history. Drag movement previews a draft; release commits one update, cancellation drops it. Autosave sees only committed state, never intermediate frames. Invalid edits do not mutate the canonical scene or clear redo.
+
+`src/scene/placed-furniture.tsx` projects captured pointer rays onto Y=0 while disabling OrbitControls during a furniture drag. `CatalogDrop` converts actual viewport drop coordinates through the current camera and commits one add command at the projected point. Numeric transforms bypass drag snapping to preserve exact intent; optional 0.1 m grid and 0.2 m near-wall snapping apply to dragging/dropping. Explicit alignment uses rotated extents at a chosen wall. Neither clamping, collisions, nor fit claims are added ahead of Phase 4.
+
+### Local format and recovery
+
+The implemented schema 1 is the `SceneDocument` above: schema version, room, placements, and display units. Project IDs/titles, scene versions, openings, and clearance policies are later additions that require explicit compatible migrations/versioning. Current guest imports accept sample/user-entered measurements, optional bounded evidence and nonnegative uncertainty; they do not accept invented manufacturer verification. Unknown object URLs are not loaded: asset IDs must match supported catalog revisions.
+
+`src/domain/scene-document.ts` reconstructs validated plain data from untrusted JSON. It rejects unsupported versions, malformed dimensions/positions, invalid variants/revisions, fixed-item resizing, duplicate IDs, room-reference mismatches, unknown materials, >100 placements, and >1 MiB files. Imports are atomic; successful user imports enter history. No arbitrary data is executed or inserted as HTML.
+
+`useLocalScene` reads `fitspace.scene.v1` before enabling editing or autosaving. Valid data hydrates the store before subscriptions; the default scene cannot overwrite an unread saved scene. Autosave is debounced 350 ms, flushes pending committed state on pagehide/unmount, and acknowledges only after `setItem` succeeds. Units persist without entering history. History, camera, selection, visibility, snapping preferences, and transient drag state do not persist.
+
+Corrupt/future/incompatible data blocks writes and is retained for download. The user can export the current scene, retry/reload saved data, or explicitly replace it. Quota/permission failures retain memory and show an error. Storage events plus expected-raw comparison detect common other-tab changes and pause overwrites; localStorage does not provide transactional compare-and-swap, so this is not a concurrent-editing guarantee. Users should export before conflict resolution. Browser clearing/private-mode limitations remain; no cloud protection is implied.
+
+A tab-local session marker also retains failed/blocked save state across route unmount/remount. Newer unsaved in-memory edits must not be replaced by an older stored copy when returning to the editor, including React development remounts. This marker is not persisted, is not authentication, and cannot recover memory after a full browser refresh.

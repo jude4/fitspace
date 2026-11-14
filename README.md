@@ -2,7 +2,7 @@
 
 **See it. Place it. Know it fits.**
 
-An interactive 3D interior-planning project, developed in explicitly approved phases. Phases 1–2 provide a responsive landing page, procedural room demo, and a working measured rectangular-room editor. Furniture placement, fit analysis, accounts, and saving follow later.
+An interactive 3D interior-planning project, developed in explicitly approved phases. Phases 1–3 provide a responsive landing, measured rectangular rooms, a sample furniture catalog, interactive placement, and versioned local saving. Fit analysis, accounts, cloud projects, and commercial integrations follow later.
 
 ## Run locally
 
@@ -28,10 +28,10 @@ pnpm's store/cache/state use sibling directories configured in `.npmrc`; no secr
 - Three palettes change actual room materials; Before/After removes and restores demo furniture.
 - Drag to orbit, wheel/pinch to zoom, front view, camera reset, and optional slow camera motion. Motion pauses offscreen and is disabled by reduced-motion preference.
 - Lazy-loaded WebGL renderer, loading/error states, unavailable-WebGL and context-loss fallbacks, capped resolution, and automatic lower rendering quality for detected software renderers or low-core devices.
-- `/workspace` creates an empty rectangular room from sample templates or your own interior measurements. Edit dimensions, materials, visibility, and camera views with undo/redo.
+- `/workspace` creates a rectangular room from sample templates or your interior measurements. Add, drag, rotate, inspect, and arrange original sample furniture; recover the scene after refresh using local device storage.
 - `/projects` and `/business` still describe future functionality; accounts and commercial integrations are not available.
 
-## Room builder (Phase 2)
+## Room builder and furniture editor (Phases 2–3)
 
 Choose **Start Designing** or open `/workspace`. Select a sample template and create an empty room, or edit the current room dimensions and apply them. Width/depth support **1–30 m** and height **1.8–6 m**. Geometry uses meters internally, with 0.12 m structural thickness extending outside the measured interior. Template measurements are labeled samples; only edited axes become user-entered, never independently verified.
 
@@ -39,7 +39,19 @@ Use **m** or **ft / in** to change display. Imperial entry uses whole feet plus 
 
 Switch perspective/overhead views, drag to orbit, right-drag to pan, and scroll/pinch to zoom. Equivalent camera buttons support keyboard users. Frame/reset fits the supported room size and viewport aspect ratio. Measurement labels and a 0.5 m grid can be toggled. Undo/redo buttons and Ctrl/⌘ Z, Ctrl/⌘ Shift Z (or Ctrl Y) restore committed room edits; text inputs retain their native editing shortcuts. Camera, unit, selection, and visibility changes do not enter history.
 
-On small screens, use **Room & scene** and **Properties** to switch panels. Numeric editing remains available without WebGL. A graphics retry preserves the current room, but **refresh resets it**: this phase has no local/cloud saving. There is no furniture catalog or fit analysis yet.
+On small screens, use **Room & scene** and **Properties** to switch panels. Numeric editing remains available without WebGL. A graphics retry preserves the current scene. Valid scenes save automatically on this device; there is no cloud saving or fit analysis yet.
+
+## Sample furniture and local saving
+
+Use **Browse furniture** to reach the catalog. Search and combine category/material filters across nine original sample concepts: sofa, chair, table, bed, cabinet, shelf, desk, lamp, and refrigerator volume. Open a card for an orbitable 3D preview and details, then **Add … to room**, or drag the card onto the viewport. These are FitSpace concepts with **sample dimensions**, not retailer listings, verified specifications, prices, or purchase links.
+
+Select furniture in 3D or the placed-object list. Drag it across the floor, or edit exact X/Z coordinates and yaw in the inspector. Metric entries use meters; imperial furniture coordinate/resize entries use explicitly labeled **decimal feet**, while read-only dimensions use feet/inches. Apply pending edits before changing selection or units. Fixed products cannot resize; the sample shelf/desk permit width changes only within their displayed ranges. Change material variants, duplicate, delete, and undo/redo. One drag is one history step. Selected bounds/dimensions are contextual; select a room surface to see room measurement labels again.
+
+Optional drag snapping uses a 0.1 m grid and a 0.2 m near-wall threshold; explicit wall alignment uses the rotated physical envelope. Positions are limited to ±100 m and Y=0; scenes support at most 100 objects. Objects may overlap or extend beyond the room: **snapping and bounds are positioning aids, not fit checks**. Collision/clearance feedback arrives in Phase 4.
+
+The header reports **Saving**, **Saved on this device**, or **Not saved locally**. Saving is debounced, so wait for acknowledgement before closing. The local format pins product/asset revisions and dimensions. Export a JSON backup; import validates the file before replacing the design and can be undone. Only schema version 1, supported sample asset revisions, and files ≤1 MiB are accepted. Imported sample/user-entered provenance never becomes manufacturer verification.
+
+Corrupt, future-version, or incompatible saved data is preserved until you explicitly replace it. Recovery controls let you download the saved data, export the in-memory scene, retry/reload, or replace the stored copy. Quota/permission errors retain edits in memory and do not claim success. Another-tab changes pause autosaving until resolved; this is basic conflict detection, not collaborative locking. Browser storage can be cleared or unavailable; exported backups are the portable recovery path. Cloud/account saving remains Phase 5.
 
 ## Checks
 
