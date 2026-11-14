@@ -7,6 +7,11 @@ import {
   type RoomElement,
   type Units,
 } from '@/domain/room';
+import {
+  defaultSpatialSettings,
+  validateSpatialSettings,
+  type SpatialSettings,
+} from '@/domain/spatial-settings';
 import type { EditorView } from '@/domain/room-camera';
 import { findProduct } from '@/domain/catalog';
 import {
@@ -38,6 +43,12 @@ export type CameraAction =
   | 'rotate-right';
 type EditorState = {
   room: Room;
+  spatial: SpatialSettings;
+  setSpatial: (settings: SpatialSettings) => boolean;
+  showSpatialWarnings: boolean;
+  showClearance: boolean;
+  setShowSpatialWarnings: (value: boolean) => void;
+  setShowClearance: (value: boolean) => void;
   localSessionId: string | null;
   placements: Placement[];
   past: SceneSnapshot[];
@@ -81,6 +92,34 @@ type EditorState = {
 };
 export const useEditorStore = create<EditorState>((set, get) => ({
   room: createRoom(),
+  spatial: defaultSpatialSettings(),
+  showSpatialWarnings: true,
+  showClearance: false,
+  setShowSpatialWarnings: (showSpatialWarnings) => set({ showSpatialWarnings }),
+  setShowClearance: (showClearance) => set({ showClearance }),
+  setSpatial: (spatial) => {
+    const issue = validateSpatialSettings(spatial);
+    if (issue) {
+      set({ error: issue });
+      return false;
+    }
+    const s = get();
+    if (JSON.stringify(s.spatial) === JSON.stringify(spatial)) {
+      set({ error: null });
+      return true;
+    }
+    set({
+      spatial,
+      past: [
+        ...s.past,
+        { room: s.room, placements: s.placements, spatial: s.spatial },
+      ].slice(-HISTORY_LIMIT),
+      future: [],
+      error: null,
+      announcement: 'Spatial guidelines updated.',
+    });
+    return true;
+  },
   localSessionId: null,
   placements: [],
   selectedPlacementId: null,
@@ -155,7 +194,11 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       placements,
       past: [
         ...state.past,
-        { room: state.room, placements: state.placements },
+        {
+          room: state.room,
+          placements: state.placements,
+          spatial: state.spatial,
+        },
       ].slice(-HISTORY_LIMIT),
       future: [],
       selected: null,
@@ -199,12 +242,14 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     const s = get();
     set({
       room: document.room,
+      spatial: document.spatial,
       placements: document.placements,
       units: document.displayUnits,
       past: remember
-        ? [...s.past, { room: s.room, placements: s.placements }].slice(
-            -HISTORY_LIMIT,
-          )
+        ? [
+            ...s.past,
+            { room: s.room, placements: s.placements, spatial: s.spatial },
+          ].slice(-HISTORY_LIMIT)
         : [],
       future: [],
       selected: 'floor',
@@ -259,9 +304,15 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       room: result.room,
       past: [
         ...current.past,
-        { room: current.room, placements: current.placements },
+        {
+          room: current.room,
+          placements: current.placements,
+          spatial: current.spatial,
+        },
       ].slice(-HISTORY_LIMIT),
       placements: command.type === 'create' ? [] : current.placements,
+      spatial:
+        command.type === 'create' ? defaultSpatialSettings() : current.spatial,
       selectedPlacementId:
         command.type === 'create' ? null : current.selectedPlacementId,
       dragDraft: null,
@@ -271,7 +322,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     return true;
   },
   undo: () => {
-    const { past, room, placements, future } = get();
+    const { past, room, placements, spatial, future } = get();
     if (!past.length) return;
     set({
       announcement: 'Undid room edit.',
@@ -280,12 +331,12 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       selected: 'floor',
       dragDraft: null,
       past: past.slice(0, -1),
-      future: [{ room, placements }, ...future],
+      future: [{ room, placements, spatial }, ...future],
       error: null,
     });
   },
   redo: () => {
-    const { future, past, room, placements } = get();
+    const { future, past, room, placements, spatial } = get();
     if (!future.length) return;
     set({
       announcement: 'Redid room edit.',
@@ -293,7 +344,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       selectedPlacementId: null,
       selected: 'floor',
       dragDraft: null,
-      past: [...past, { room, placements }].slice(-HISTORY_LIMIT),
+      past: [...past, { room, placements, spatial }].slice(-HISTORY_LIMIT),
       future: future.slice(1),
       error: null,
     });

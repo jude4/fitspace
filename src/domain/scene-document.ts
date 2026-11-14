@@ -1,4 +1,9 @@
 import {
+  defaultSpatialSettings,
+  validateSpatialSettings,
+  type SpatialSettings,
+} from './spatial-settings';
+import {
   axes,
   createRoom,
   floorMaterials,
@@ -13,9 +18,14 @@ import {
   MAX_PLACEMENTS,
   type Placement,
 } from './placements';
-export type SceneSnapshot = { room: Room; placements: Placement[] };
+export type SceneSnapshot = {
+  room: Room;
+  placements: Placement[];
+  spatial?: SpatialSettings;
+};
 export type SceneDocument = SceneSnapshot & {
-  schemaVersion: 1;
+  schemaVersion: 2;
+  spatial: SpatialSettings;
   displayUnits: Units;
 };
 export const MAX_SCENE_BYTES = 1024 * 1024;
@@ -76,7 +86,7 @@ export function parseScene(raw: string): SceneDocument {
   if (new TextEncoder().encode(raw).length > MAX_SCENE_BYTES)
     throw new Error('Scene files are limited to 1 MiB.');
   const v: unknown = JSON.parse(raw);
-  if (!record(v) || v.schemaVersion !== 1)
+  if (!record(v) || (v.schemaVersion !== 1 && v.schemaVersion !== 2))
     throw new Error(
       'Unsupported scene version. Keep the original file for recovery.',
     );
@@ -143,8 +153,42 @@ export function parseScene(raw: string): SceneDocument {
   });
   if (v.displayUnits !== 'metric' && v.displayUnits !== 'imperial')
     throw new Error('Unknown display units.');
-  return { schemaVersion: 1, room, placements, displayUnits: v.displayUnits };
+  let spatial = defaultSpatialSettings();
+  if (v.schemaVersion === 2) {
+    const config = v.spatial;
+    if (
+      !record(config) ||
+      typeof config.clearanceMeters !== 'number' ||
+      !record(config.doorway)
+    )
+      throw new Error('Invalid spatial settings.');
+    const dim = (raw: unknown) =>
+      raw === null
+        ? null
+        : dimensionSet({ width: raw, depth: raw, height: raw }).width;
+    spatial = {
+      clearanceMeters: config.clearanceMeters,
+      doorway: {
+        width: dim(config.doorway.width),
+        height: dim(config.doorway.height),
+      },
+    };
+    const issue = validateSpatialSettings(spatial);
+    if (issue) throw new Error(issue);
+  }
+  return {
+    schemaVersion: 2,
+    room,
+    placements,
+    spatial,
+    displayUnits: v.displayUnits,
+  };
 }
 export function serializeScene(snapshot: SceneSnapshot, displayUnits: Units) {
-  return JSON.stringify({ schemaVersion: 1, ...snapshot, displayUnits });
+  return JSON.stringify({
+    schemaVersion: 2,
+    ...snapshot,
+    spatial: snapshot.spatial ?? defaultSpatialSettings(),
+    displayUnits,
+  });
 }

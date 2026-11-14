@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { parseScene, serializeScene } from '@/domain/scene-document';
 import { useEditorStore } from './editor-store';
 export const LOCAL_SCENE_KEY = 'fitspace.scene.v1';
+export const LEGACY_SCENE_BACKUP_KEY = 'fitspace.scene.v1.backup';
 export type SaveState = {
   status: 'loading' | 'saving' | 'saved' | 'error' | 'blocked';
   message: string;
@@ -55,9 +56,23 @@ export function useLocalScene() {
         }
         const s = useEditorStore.getState(),
           raw = serializeScene(
-            { room: s.room, placements: s.placements },
+            { room: s.room, placements: s.placements, spatial: s.spatial },
             s.units,
           );
+        let legacy = false;
+        if (previous !== null) {
+          try {
+            legacy = JSON.parse(previous)?.schemaVersion === 1;
+          } catch {
+            /* Explicit replacement may discard malformed data after user recovery. */
+          }
+        }
+        if (
+          previous !== null &&
+          legacy &&
+          window.localStorage.getItem(LEGACY_SCENE_BACKUP_KEY) === null
+        )
+          window.localStorage.setItem(LEGACY_SCENE_BACKUP_KEY, previous);
         window.localStorage.setItem(LOCAL_SCENE_KEY, raw);
         expectedRaw = raw;
         update({
@@ -148,7 +163,8 @@ export function useLocalScene() {
         if (
           next.room !== previous.room ||
           next.placements !== previous.placements ||
-          next.units !== previous.units
+          next.units !== previous.units ||
+          next.spatial !== previous.spatial
         )
           schedule();
       });
@@ -208,7 +224,10 @@ export function downloadText(text: string, name: string) {
 export function exportCurrentScene() {
   const s = useEditorStore.getState();
   downloadText(
-    serializeScene({ room: s.room, placements: s.placements }, s.units),
+    serializeScene(
+      { room: s.room, placements: s.placements, spatial: s.spatial },
+      s.units,
+    ),
     'fitspace-scene.json',
   );
 }

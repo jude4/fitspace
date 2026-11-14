@@ -1,3 +1,4 @@
+import { defaultSpatialSettings } from '@/domain/spatial-settings';
 import { beforeEach, describe, it, expect } from 'vitest';
 import {
   products,
@@ -134,7 +135,8 @@ describe('scene boundary validation', () => {
     };
     const restored = parseScene(serializeScene(scene, 'imperial'));
     expect(restored).toEqual({
-      schemaVersion: 1,
+      schemaVersion: 2,
+      spatial: defaultSpatialSettings(),
       ...scene,
       displayUnits: 'imperial',
     });
@@ -145,7 +147,7 @@ describe('scene boundary validation', () => {
       serializeScene({ room, placements: [p] }, 'metric'),
     );
     for (const invalid of [
-      { ...good, schemaVersion: 2 },
+      { ...good, schemaVersion: 999 },
       { ...good, placements: [p, p] },
       {
         ...good,

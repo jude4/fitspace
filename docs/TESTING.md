@@ -150,3 +150,23 @@ Screenshot artifacts in ignored `test-results/` include product previews, the fu
 Type/lint checks caught pointer-capture target typing and a mutable declaration; both were corrected. All implemented assertions remain enabled. Browser checks reported no errors in the primary furniture journey; expected storage/graphics failures were tested separately. No spatial-fit, auth, cloud, AR, AI, retailer, billing, live deployment, physical-GPU, or cross-browser functionality is claimed as tested in this phase.
 
 A final regression test additionally covers failed-save route re-entry: a quota failure leaves a newer 7 m in-memory room and an older 4 m stored copy. Unmounting and remounting under React Strict Mode retains the newer room and error status instead of hydrating the older copy. The tab-local retention marker is excluded from exports and history.
+
+## Phase 4 actual results — 2026-11-14
+
+Environment retained: Node 24.22.1, pnpm 11.25.0, Linux cloud machine, system Chromium 156 with SwiftShader. No dependencies or external services were added.
+
+- `pnpm typecheck` and `pnpm lint` passed with strict types and all rules retained.
+- `pnpm test`: **71 tests passed across 9 files**. The 19 added checks cover geometry matching actual Three.js yaw transforms, disjoint/touching/contained/rotated rectangles, minimum distances and 1 mm thresholds, vertical intervals, boundary/height/wall findings, clearance settings, missing/nonfinite data, estimate qualifications, doorway tipping/uncertainty/thresholds, comparisons, version 1 migration/version 2 validation, settings across history/room recreation, original migration backup, backup failure retention, and malformed JSON explicit replacement.
+- `pnpm build` passed after the final source changes; all existing routes compile and prerender. Native Next.js `.next` output is retained.
+- The **final full 30-case browser suite passed**: all 24 retained landing/room/furniture journeys plus six spatial journeys. These exercise nominal initial results, duplicate overlap, visible bounds toggling, undo/redo, outside/west-wall findings, guideline/doorway changes, unknown inputs, dimension comparisons, persistence, exact legacy backup download, and Analysis controls/error states at 360/768 px.
+- The final targeted spatial run passed **all 6 cases** against the final build, additionally asserting real clearance-envelope canvas changes and that a crowded 12-object report retains all 66 overlap findings plus 12 boundary findings behind progressive disclosure. After fixing desktop paint containment, the full 30-case suite passed again against the final production build, including the new document-height assertion. The resulting desktop screenshot is 1440 × 1000 without the previous blank overflow area.
+
+Visual review caught a long-panel scroll-overflow issue: desktop paint containment now keeps the document within the viewport while inspector content scrolls independently. A browser assertion guards the document height.
+
+Desktop/mobile artifacts in ignored `test-results/spatial-{desktop,360,768}.png` were visually reviewed. The inspector provides labeled inputs, explicit unknown values, readable limitation text and responsive navigation; viewport warning bounds correspond to potential envelope conflicts. A keyboard-focused skip link visible in the mobile capture is the normal focus state. Selected warnings also have text, so severity is not color-only.
+
+Review caught and fixed a migration edge case: attempting to inspect the version of malformed JSON must not prevent explicit replacement. A new regression proves the old raw remains blocked until the Replace action and then correctly saves the current in-memory scene. An invalid testing-library option was corrected during strict typechecking; no assertions were removed.
+
+Geometry tests validate deterministic numeric behavior, not physical measurements. Boundary and clearance results are nominal, absent uncertainty is unknown, and rectangular envelopes can overestimate real mesh overlap. Doorway results compare six axis orientations only; they never certify delivery. Located openings, route planning, accessibility certification, Supabase/auth, cloud sharing, AR, AI, retailers, billing, real Vercel deployment, physical GPU/touch performance, and Safari/Firefox remain unverified or future scope.
+
+Final handoff checks: formatting, local Markdown links, phase-status/document consistency, and `git diff --check` passed. The development `/workspace` route also served successfully with Layout analysis available. Reusable cloud startup instructions were saved as a draft; publication and fresh-task restoration have not been tested.

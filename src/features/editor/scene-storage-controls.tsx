@@ -1,9 +1,14 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MAX_SCENE_BYTES, parseScene } from '@/domain/scene-document';
 import { useEditorStore } from './editor-store';
-import { downloadText, exportCurrentScene, useLocalScene } from './local-scene';
+import {
+  downloadText,
+  exportCurrentScene,
+  useLocalScene,
+  LEGACY_SCENE_BACKUP_KEY,
+} from './local-scene';
 export function SceneStorageControls({
   storage,
 }: {
@@ -11,6 +16,17 @@ export function SceneStorageControls({
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [error, setError] = useState('');
+  const [legacyBackup, setLegacyBackup] = useState<string | null>(null);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      try {
+        setLegacyBackup(localStorage.getItem(LEGACY_SCENE_BACKUP_KEY));
+      } catch {
+        setLegacyBackup(null);
+      }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [storage.status]);
   return (
     <section className="scene-storage" aria-label="Local scene storage">
       <div className="storage-tools">
@@ -50,6 +66,17 @@ export function SceneStorageControls({
           }}
         />
       </div>
+      {legacyBackup !== null && (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() =>
+            downloadText(legacyBackup, 'fitspace-schema1-backup.json')
+          }
+        >
+          Download pre-upgrade backup
+        </Button>
+      )}
       {error && (
         <p role="alert" className="editor-error">
           {error}

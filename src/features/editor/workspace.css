@@ -1156,5 +1156,149 @@
   .workspace-shell {
     height: 100dvh;
     overflow: hidden;
+    contain: paint;
+  }
+}
+.analysis-panel .spatial-field {
+  margin-top: 16px;
+}
+.spatial-finding {
+  border: 1px solid #d4dec7;
+  border-left: 3px solid #859d69;
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 12px;
+  background: #f2f5ea;
+}
+.spatial-finding strong {
+  font-size: 11px;
+  text-transform: capitalize;
+  color: #61764b;
+  font-weight: 500;
+}
+.spatial-finding p {
+  font-size: 10px;
+  line-height: 1.75;
+  margin: 8px 0;
+  color: #7b886d;
+}
+.spatial-finding small {
+  display: block;
+  font-size: 9px;
+  color: #89977b;
+  line-height: 1.6;
+}
+.spatial-finding button {
+  font-size: 9px;
+  color: #657e4c;
+  background: transparent;
+  border: 0;
+  padding: 7px 0;
+  margin-right: 10px;
+  text-align: left;
+}
+.finding-error {
+  border-color: #e1c5b7;
+  border-left-color: #b65f48;
+  background: #faf0e8;
+}
+.finding-error strong {
+  color: #9f5944;
+}
+.finding-warning {
+  border-color: #e2d5b8;
+  border-left-color: #b39656;
+  background: #f8f3e6;
+}
+.finding-warning strong {
+  color: #92783f;
+}
+.spatial-findings details {
+  margin-top: 20px;
+  font-size: 10px;
+  color: #8a957a;
+  line-height: 1.75;
+}
+.spatial-findings summary {
+  cursor: pointer;
+}
+.spatial-findings details p {
+  font-size: 10px;
+  margin-top: 12px;
+}
+.doorway-result {
+  font-size: 11px;
+  line-height: 1.85;
+  padding: 12px;
+  background: #edf1e3;
+  border: 1px solid #d9e1cb;
+  border-radius: 4px;
+  margin-top: 15px;
+  color: #6b7e54;
+}
+.dimension-comparison {
+  width: 100%;
+  font-size: 8px;
+  border-collapse: collapse;
+  margin-top: 15px;
+  table-layout: fixed;
+}
+.dimension-comparison caption {
+  font-size: 9px;
+  margin-bottom: 12px;
+  text-align: left;
+  color: #89977b;
+}
+.dimension-comparison th,
+.dimension-comparison td {
+  padding: 8px 3px;
+  border-bottom: 1px solid #dde4d1;
+  text-align: left;
+  overflow-wrap: anywhere;
+  color: #748763;
+}
+.desktop-analysis-button {
+  font-size: 10px;
+  min-height: 36px;
+  padding: 8px 12px;
+}
+.analysis-panel .object-dimensions dd {
+  font-size: 10px;
+}
+@media (max-width: 1230px) {
+  .desktop-analysis-button {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .mobile-panel-switch {
+    gap: 6px;
+  }
+  .mobile-panel-switch .button {
+    padding: 8px 9px;
+    font-size: 10px;
+  }
+  .analysis-panel .spatial-field {
+    font-size: 12px;
+  }
+  .spatial-finding p {
+    font-size: 12px;
+  }
+  .spatial-finding strong {
+    font-size: 12px;
+  }
+  .spatial-finding small {
+    font-size: 10px;
+  }
+  .spatial-finding button {
+    font-size: 11px;
+    padding: 10px 0;
+  }
+  .spatial-findings details,
+  .spatial-findings details p {
+    font-size: 11px;
+  }
+  .dimension-comparison {
+    font-size: 10px;
   }
 }
