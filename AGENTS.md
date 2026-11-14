@@ -4,7 +4,7 @@ Before changes, read `README.md`, `docs/PROJECT_VISION.md`, `docs/ARCHITECTURE.m
 
 ## Phase discipline
 
-- Work only on the approved phase. Phase 0 is documented; Phase 1 has not been approved.
+- Work only on the approved phase. Phases 0–1 are complete; Phase 2 requires explicit approval. See `docs/PROGRESS.md` for current evidence and limitations.
 - Explain scope, files, dependencies, checks, and risks before implementation.
 - Complete the phase in small tasks, run relevant checks, update progress/roadmap/decisions/testing, report results, and stop for explicit approval before the next phase.
 - Never mark planned features or unrun checks as complete. Keep the app runnable once initialized.
@@ -22,3 +22,13 @@ Before changes, read `README.md`, `docs/PROJECT_VISION.md`, `docs/ARCHITECTURE.m
 - Support keyboard controls, reduced motion, responsive layouts, loading/error states, and WebGL failure fallbacks.
 - Add meaningful tests for behavior, geometry, serialization, authorization, and important user journeys. Do not weaken assertions to pass.
 - Before phase completion, run available type/lint/test/build checks; visually verify implemented UI and 3D when browser access permits. Record exact limitations.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

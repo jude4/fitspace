@@ -4,7 +4,7 @@ Phases execute sequentially. At each gate, update the documentation, report actu
 
 ## Phase 0 — Planning and architecture
 
-**Status:** Complete; awaiting approval for Phase 1.
+**Status:** Complete.
 
 Scope: inspect repository, define MVP and journeys, architecture, database relationships, canonical scene/units/provenance, asset/performance strategy, folder structure, and complete roadmap.
 
@@ -12,13 +12,14 @@ Acceptance: all eight required documentation files exist and agree on scope and 
 
 ## Phase 1 — Foundation, design system, landing page
 
-**Status:** Not started; approval required.
+**Status:** Complete (2026-11-14); physical-device performance validation remains a documented limitation. Phase 2 requires separate approval.
 
 Sequence: consult official compatibility docs → pin Node/pnpm/framework/renderer versions → initialize Next.js strict TypeScript/Tailwind/shadcn primitives → configure Vitest/RTL/Playwright/ESLint/formatting → create navigation and responsive landing → procedural live room → verify.
 
 Deliver: elegant landing with headline, Start Designing and Explore Demo, functional before/after comparison, feature/process/example/business sections, footer, original or attributed assets, lightweight PBR room with floor/walls/furniture/lighting/shadows, constrained camera animation, loading/error/WebGL fallback. `/workspace` is a clearly identified upcoming-editor shell until Phase 2, not a fake working editor; future route shells explicitly state availability. Defer subscription pricing until Phase 9.
 
 Acceptance:
+
 - Frozen installation, development server, typecheck, lint, unit/component tests, browser tests, and production build succeed.
 - Primary links navigate to intended routes; before/after visibly changes the actual scene and is keyboard operable.
 - Browser confirms nonblank 3D rendering without console errors; reduced motion disables camera animation; WebGL failure shows usable fallback.

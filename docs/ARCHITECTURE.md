@@ -1,10 +1,10 @@
 # Architecture
 
-Status: design specification for Phase 0, not implemented APIs or migrations.
+Status: architecture baseline from Phase 0. Phase 1 implements the Next.js shell, shared UI, Zustand demo state, and lazy-loaded procedural WebGL room. Database, editor domain commands, persistence, and integrations below remain future specifications. Exact installed versions and compatibility evidence are in [DEPENDENCIES.md](DEPENDENCIES.md).
 
 ## Stack and boundaries
 
-Use Next.js App Router, React, strict TypeScript, Tailwind, shadcn/ui, Lucide, Zustand, Three.js, stable React Three Fiber and compatible Drei. Verify official peer/version guidance before installing in Phase 1; no exact versions are selected yet. Use WebGL first. Supabase PostgreSQL/Auth/Storage begins in Phase 5; no microservices are needed initially. FastAPI/background workers are introduced only if measured processing workloads justify them. AI and Stripe remain server-only integrations in later phases.
+Use Next.js App Router, React, strict TypeScript, Tailwind, shadcn/ui, Lucide, Zustand, Three.js, stable React Three Fiber and compatible Drei. Phase 1 verified official guidance and pinned compatible renderer/framework versions; review compatibility again before upgrades. Use WebGL first. Supabase PostgreSQL/Auth/Storage begins in Phase 5; no microservices are needed initially. FastAPI/background workers are introduced only if measured processing workloads justify them. AI and Stripe remain server-only integrations in later phases.
 
 Server-render the landing shell and ordinary navigation. Load the renderer lazily in a client boundary; handle loading, unsupported WebGL, context loss, and asset failures without removing ordinary page navigation. Keep domain calculations pure, independent of browser/GPU state.
 
@@ -55,8 +55,12 @@ Tests live at root `tests/unit`, `tests/component`, and `tests/e2e`, with fixtur
 type Vec3 = { x: number; y: number; z: number };
 type Dimension = {
   meters: number;
-  source: 'user_entered' | 'manufacturer_verified' | 'model_inferred'
-    | 'image_estimated' | 'sample';
+  source:
+    | 'user_entered'
+    | 'manufacturer_verified'
+    | 'model_inferred'
+    | 'image_estimated'
+    | 'sample';
   evidence?: { reference: string; recordedAt: string };
   uncertaintyMeters?: number;
 };
@@ -117,22 +121,22 @@ The versioned scene document is the canonical persisted layout. Normalized room 
 
 Use UUID primary keys, timestamps, foreign keys, validated JSONB, indexed ownership keys, and integer revisions. Units and provenance use the same schema as the scene contract.
 
-| Entity | Essential fields and relationships |
-| --- | --- |
-| profiles | id → auth.users, display_name; no client-writable role escalation |
-| projects | id, owner_id → profiles, title, current_revision, current_scene JSONB, thumbnail_asset_id nullable, deleted_at |
-| rooms | id, project_id → projects, dimensions/provenance JSONB, openings JSONB, materials; initially one per project |
-| products | id, merchant_id nullable, current_revision, active status; stable catalog identity |
-| product_revisions | product_id → products + revision composite primary key; immutable name, category, optional dimensions/provenance, adjustable_axes/ranges, variants, authentic external URL/price metadata later |
-| assets | id, owner_id nullable, merchant_id nullable, storage_path, immutable revision, type, license/attribution, source units/pivot/scale, validation status, byte count, hash |
-| product_assets | product_id + product_revision → product_revisions, asset_revision_id → assets, variant association |
-| placements | id, project_id → projects, room_id → rooms, product/revision → product_revisions, asset revision → assets, dimensions snapshot, transform, variant |
-| scene_versions | id, project_id → projects, revision, schema_version, document JSONB, creator_id, created_at; unique project/revision |
-| sharing_permissions | id, project_id → projects, scene_version_id, token_hash unique, expires_at, revoked_at; read-only snapshot scope |
-| merchants | id, name, verified external domain; Phase 8 |
-| merchant_members | merchant_id + user_id, role; Phase 8 |
-| subscriptions | account scope, provider IDs/status/plan, entitlement revision; Phase 9, server managed |
-| webhook_events | provider event ID unique, processing status; Phase 9 replay protection |
+| Entity              | Essential fields and relationships                                                                                                                                                              |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| profiles            | id → auth.users, display_name; no client-writable role escalation                                                                                                                               |
+| projects            | id, owner_id → profiles, title, current_revision, current_scene JSONB, thumbnail_asset_id nullable, deleted_at                                                                                  |
+| rooms               | id, project_id → projects, dimensions/provenance JSONB, openings JSONB, materials; initially one per project                                                                                    |
+| products            | id, merchant_id nullable, current_revision, active status; stable catalog identity                                                                                                              |
+| product_revisions   | product_id → products + revision composite primary key; immutable name, category, optional dimensions/provenance, adjustable_axes/ranges, variants, authentic external URL/price metadata later |
+| assets              | id, owner_id nullable, merchant_id nullable, storage_path, immutable revision, type, license/attribution, source units/pivot/scale, validation status, byte count, hash                         |
+| product_assets      | product_id + product_revision → product_revisions, asset_revision_id → assets, variant association                                                                                              |
+| placements          | id, project_id → projects, room_id → rooms, product/revision → product_revisions, asset revision → assets, dimensions snapshot, transform, variant                                              |
+| scene_versions      | id, project_id → projects, revision, schema_version, document JSONB, creator_id, created_at; unique project/revision                                                                            |
+| sharing_permissions | id, project_id → projects, scene_version_id, token_hash unique, expires_at, revoked_at; read-only snapshot scope                                                                                |
+| merchants           | id, name, verified external domain; Phase 8                                                                                                                                                     |
+| merchant_members    | merchant_id + user_id, role; Phase 8                                                                                                                                                            |
+| subscriptions       | account scope, provider IDs/status/plan, entitlement revision; Phase 9, server managed                                                                                                          |
+| webhook_events      | provider event ID unique, processing status; Phase 9 replay protection                                                                                                                          |
 
 Project-to-room-to-placement links must enforce same-project membership via composite constraints or the transaction function. Keep referenced catalog/asset revisions immutable; soft-delete catalog entries and retain pinned revisions. Project deletion removes private derived rows and versions, revokes shares, and schedules unreferenced asset cleanup; never remove an asset still referenced by another project. Auth-user deletion and retention require an explicit policy before launch.
 
@@ -161,3 +165,11 @@ Return structured findings with code, severity, object IDs, assumptions, measure
 Photo assistance retains a visual reference and manual calibration, labeled approximate. AR uses feature-detected WebXR/platform viewers with validated scale and HTTPS; actual device validation is required. AI produces a schema-validated allowlisted command proposal, never executable code, with preview/confirmation for destructive changes, undo, and deterministic re-analysis. Rules-based mode is explicitly labeled when no API is configured.
 
 Uploads use allowlisted formats, size/geometry/texture limits, quarantine, authorized paths, server validation, and rejection of unsafe external references. Expensive decoding belongs in a constrained worker when needed. Embeds restrict allowed origins and validate postMessage origins. Outbound product URLs must be validated HTTPS links. Billing uses verified, idempotent webhooks and server-side entitlements; Stripe test mode precedes live configuration. Rate limiting, monitoring, privacy/legal review, backup restoration, and incident response are Phase 9 launch gates.
+
+## Phase 1 implementation notes
+
+`src/domain/demo.ts` holds plain sample palette, room, and camera definitions. `src/features/landing/demo-store.ts` owns demo-only UI state; this is not the future persistent scene/history store. `RoomPreview` checks browser capabilities, lazy-loads the client-only renderer, and retains accessible controls and status. `RoomGeometry` builds original procedural furniture and architecture; no external models or textures are fetched. These concept materials are simple PBR colors, not photographic reproductions.
+
+Demand rendering is the default. Camera motion is opt-in, slow, offscreen-paused, and disabled for reduced motion. Camera reset updates the existing camera rather than recreating the GPU context. A context-loss listener is registered with cleanup. Responsive camera distance adjusts with canvas aspect ratio.
+
+Thin structural shapes use simple boxes; upholstered shapes use modest rounded geometry. WebGL renderer detection uses the optional debug extension where available; detected software renderers and devices reporting ≤4 logical cores receive 0.75 DPR and disabled dynamic shadows. Otherwise DPR is capped at 1.5 and bounded 1024px directional shadows are enabled. Detection is a heuristic; it does not establish universal performance. Reference-device profiling remains required.
