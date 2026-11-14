@@ -11,11 +11,14 @@ import { FurnitureInspector } from './furniture-inspector';
 import { useLocalScene } from './local-scene';
 import { SceneStorageControls } from './scene-storage-controls';
 import './workspace.css';
+import { AnalysisPanel } from '@/features/spatial/analysis-panel';
 export function Workspace() {
   const { room, units, undo, redo, announcement, selectedPlacementId } =
     useEditorStore();
   const storage = useLocalScene();
-  const [panel, setPanel] = useState<'room' | 'properties'>('properties');
+  const [panel, setPanel] = useState<'room' | 'properties' | 'analysis'>(
+    'properties',
+  );
   useEffect(() => {
     function key(event: KeyboardEvent) {
       if (!(event.ctrlKey || event.metaKey) || event.altKey) return;
@@ -57,6 +60,17 @@ export function Workspace() {
           </small>
         </div>
         <HistoryControls />
+        <Button
+          className="desktop-analysis-button"
+          size="sm"
+          variant="outline"
+          aria-pressed={panel === 'analysis'}
+          onClick={() =>
+            setPanel(panel === 'analysis' ? 'properties' : 'analysis')
+          }
+        >
+          Layout analysis
+        </Button>
         <span className="phase-badge">ROOM & FURNITURE</span>
       </header>
       <main id="main" className="workspace-main">
@@ -83,6 +97,13 @@ export function Workspace() {
           >
             Properties
           </Button>
+          <Button
+            variant={panel === 'analysis' ? 'default' : 'outline'}
+            aria-pressed={panel === 'analysis'}
+            onClick={() => setPanel('analysis')}
+          >
+            Analysis
+          </Button>
         </div>
         <div className={`workspace-layout mobile-panel-${panel}`}>
           <RoomPanel />
@@ -102,12 +123,18 @@ export function Workspace() {
                 interior floor area
               </span>
               <span>
-                Local device save only · No cloud sync or fit analysis
+                Local save · Nominal-envelope guidance, not a fit guarantee
               </span>
             </div>
           </section>
           <div className="inspector-stack">
-            {selectedPlacementId ? <FurnitureInspector /> : <Inspector />}
+            {panel === 'analysis' ? (
+              <AnalysisPanel />
+            ) : selectedPlacementId ? (
+              <FurnitureInspector />
+            ) : (
+              <Inspector />
+            )}
             <SceneStorageControls storage={storage} />
           </div>
         </div>

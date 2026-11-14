@@ -36,7 +36,7 @@ Acceptance: entered 4 × 5 × 2.7 m room yields matching geometry bounds within 
 
 ## Phase 3 — Catalog and placement
 
-**Status:** Complete (2026-11-14). Phase 4 requires separate approval.
+**Status:** Complete (2026-11-14). Phase 4 was subsequently authorized and implemented; see its gate below.
 
 Deliver: small curated sample catalog covering sofas/chairs/tables/beds/cabinets/shelves/desks/lamps/appliances with honest dimension labels, previews, search/category/material filters, item details, add/select/drag/rotate/numeric edit, adjustable-only resize, duplicate/delete, variants, bounds/dimensions, wall and optional grid snapping, undo/redo, local persistence. Categories lacking items must be clearly empty, not fake listings. Merchant models come later.
 
@@ -44,7 +44,7 @@ Acceptance: at least one sample in each named category has complete positive sam
 
 ## Phase 4 — Spatial fit analysis
 
-**Status:** Not started; depends on approved Phase 3.
+**Status:** Complete (2026-11-14). Nominal envelope analysis and dimension-only doorway checks passed the gate; real delivery/accessibility guarantees are excluded. Phase 5 requires separate approval.
 
 Deliver: room boundaries, furniture/wall and furniture/furniture potential intersections, configurable clearance visualization, doorway inputs and limited dimension comparisons, object comparisons, layout summary, understandable warnings and missing-data outcomes.
 

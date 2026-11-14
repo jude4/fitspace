@@ -2,42 +2,42 @@
 
 ## Current phase
 
-**Phase 3 — catalog and furniture placement complete.** The user's next-phase request authorized Phase 3. Phase 4 (spatial fit analysis) is next and requires explicit approval; it has not started.
+**Phase 4 — spatial fit analysis complete.** The user's next-phase request authorized Phase 4. Phase 5 (accounts and cloud projects) is next and requires explicit approval; it has not started.
 
 ## Completed
 
-- Retained the working landing/demo, measured rectangular-room editor, existing toolchain, Vercel configuration, and verification infrastructure.
-- Added nine original sample concepts covering sofas, chairs, tables, beds, cabinets, shelves, desks, lamps, and appliances. Every item has complete labeled sample dimensions, revision-pinned procedural assets, variants, searchable/filterable details, illustrative thumbnails, and an interactive 3D preview.
-- Added catalog-to-room dropping, Add buttons, raycast/hierarchy selection, floor dragging, exact X/Z coordinates, yaw rotation, restricted adjustable-width concepts, material variants, duplicate/delete, contextual dimension labels/bounds, optional grid/near-wall snapping, and explicit rotated wall alignment.
-- Extended history to immutable room-plus-placement snapshots. A drag previews transiently and commits one undo step; cancellation drops the draft. Recreating an empty room clears its furniture atomically and is reversible.
-- Added validated schema-1 local persistence after hydration, clear pending/saved/error status, debounced writes, exact revision/dimension round trips, JSON export/import, and preservation/recovery of corrupt or incompatible data. Quota failures retain edits in memory; common other-tab changes pause overwrites.
-- Added accessible numeric controls, native preview dialogs/focus restoration, keyboard Add/selection alternatives, graphics fallback/retry, visible catalog shortcuts, and responsive inspector/catalog layouts. Removed obsolete future-feature copy for available placement functionality.
-- No new packages, credentials, remote models, commercial product specifications, cloud services, or Phase 4 fit logic were introduced.
+- Retained the working landing, measured rectangular-room editor, nine sample furniture concepts, placement/variants/snapping/history, local recovery, toolchain, and Vercel configuration.
+- Added deterministic room-boundary/height, furniture/wall, and furniture/furniture findings using yaw-oriented physical rectangles and vertical intervals. Shared room geometry keeps rendered walls and analysis consistent; hidden walls still count. Touching/sub-millimeter contacts use an explicit 1 mm numeric tolerance.
+- Added a configurable all-sides clearance guideline (0–3 m, default 0.8 m; zero disables), nominal minimum gaps, red/amber warning bounds, selected clearance envelopes, textual warning labels, clickable findings, and layout summaries. Findings derive from the current scene, including draft drags; they are never persisted as truth. Long reports count all findings and progressively display the most severe first.
+- Added nullable clear doorway width/height inputs and six 90° dimension-orientation comparisons, including possible tipping and declared uncertainty. Results enumerate candidate axes/margins or missing/no-simple-candidate outcomes, and always exclude delivery approval. Doorway references do not create wall cutouts or routes. Added selected/other object dimension comparisons.
+- Included applied spatial settings in unified history and version 2 local/import/export documents. Version 1 scenes migrate with defaults without moving/resizing furniture or changing revisions/provenance. Exact original local bytes are backed up before migration replacement and can be downloaded; backup failure preserves the original and unsaved edits. Explicit malformed-JSON replacement remains usable.
+- Added responsive Analysis navigation, input validation, assumptions/provenance/unknown-uncertainty wording, and updated available-feature copy. Numeric analysis works independently of WebGL.
+- No packages, credentials, remote models, real merchant specifications, accounts, cloud services, or later-phase features were introduced.
 
 ## Verification
 
-- Typecheck, lint, formatting, production build, unit/component tests, Chromium browser checks, and documentation/diff checks passed; details are in [TESTING.md](TESTING.md).
-- **52 unit/component tests across 8 files** cover the retained room workflow plus catalog coverage/geometry envelopes, transforms and resize restrictions, rotated snapping, unified history, exact scene serialization, revision/provenance validation, hydration, quota errors, and preservation of incompatible data.
-- **24 browser tests** cover the full landing/room/furniture workflow, all nine assets, real pointer dragging with one undo step, catalog floor drop, exact transforms/variants, restricted resize, save/reload, import/export, invalid/future data recovery, quota backup, and other-tab conflict handling. The 9 furniture cases were rerun after final preview recovery checks.
-- Desktop/mobile workspace and product-preview screenshots were visually inspected; preview framing, contextual labels, catalog discoverability, and desktop scroll containment were refined.
-- Development `/workspace` serves the catalog and export controls. No actual Vercel deployment or physical-device performance test is claimed.
+- Strict typecheck, lint, 71 unit/component tests across 9 files, and the final production build passed. Formatting and documentation/diff verification results are recorded in [TESTING.md](TESTING.md).
+- The final full 30-case Chromium suite passed, retaining all 24 earlier landing/room/furniture journeys plus six spatial journeys. A targeted analysis run also passed all 6 cases. These cover real warning/clearance canvas changes, progressive disclosure of crowded-layout findings, and desktop document-height containment; see [TESTING.md](TESTING.md).
+- Tests cover Three.js-compatible rotations, disjoint/touching/contained/rotated rectangles, epsilon contacts, vertical separation, room height/bounds and wall intersections, configurable gaps, missing/nonfinite and estimated inputs, doorway limits/uncertainty, settings history, schema migration, exact backup download, backup-write failures, and explicit corrupt-data replacement.
+- Desktop/mobile analysis screenshots were inspected; controls, clear error states, warning bounds, source/limit text, and panel navigation remain visible/reachable at 360/768/1440 px. Production and development verification are distinguished in [TESTING.md](TESTING.md).
 
 ## Known limitations
 
-- Sample furniture is illustrative original geometry, not photorealistic captures, licensed retailer products, verified manufacturer dimensions, operational appliance specifications, prices, or purchase links.
-- Rectangular rooms remain width/depth 1–30 m and height 1.8–6 m. Furniture positions are floor-based (Y=0), bounded to ±100 m; up to 100 placements per scene. Only declared shelf/desk width ranges can resize. Geometry and snapping do not detect collisions or guarantee fit.
-- Local saving holds one scene per browser origin. Browser storage can be cleared, denied, or full; export portable backups. Corrupt/future files remain untouched until explicit replacement. Cross-tab detection is not transactional locking or collaboration.
-- Apply draft form edits before changing selection/units. Camera, history, selection, visibility, snapping preferences, and draft drag state are not persisted; committed scene data and display units are.
-- Cloud projects/auth/sharing, photo assistance, AR, AI, retailer models/imports, billing, and production hardening remain later phases. Current asset IDs are procedural; no remote GLB loading or user model uploads are claimed.
-- Physical-device GPU FPS, Safari/Firefox, and actual mobile touch feel remain unverified. Earlier landing performance measurements are not benchmarks of this larger furniture workspace.
+- All furniture remains illustrative original geometry with sample dimensions, not photorealistic captures, licensed retailer products, verified manufacturer specifications, prices, or purchase links.
+- Analysis uses nominal rectangular envelopes, not exact mesh surfaces or measurement-error bounds. Results can overestimate mesh intersections. Unknown uncertainty is not zero; no finding guarantees physical fit, a continuous walking route, building-code compliance, or accessibility.
+- Doorway checks use a clear dimension reference only, not located openings. Packaging, handling space, approach/turns, stairs, elevators, door swing, disassembly, and continuous tipping/diagonal paths are not evaluated. A candidate does not prove delivery; no simple candidate does not rule out other methods.
+- Rectangular rooms remain width/depth 1–30 m and height 1.8–6 m. Up to 100 placements, Y=0 and X/Z within ±100 m; only declared shelf/desk width ranges can resize. Warnings do not prevent edits or automatically resolve conflicts.
+- Local saving holds one scene per browser origin. Storage may be cleared, denied, or full; export portable backups. Original migration backup consumes additional local storage and retains the first pre-upgrade copy. Corrupt/future files remain untouched until explicit replacement. Cross-tab detection is not transactional collaboration.
+- Apply draft form edits before changing selection/units. Camera, history, selection, visibility, snapping, warning/clearance display toggles, and drag drafts remain transient; committed room/furniture/spatial settings and display units persist.
+- Cloud/auth/sharing, photo assistance, AR, AI, retailer models/imports, billing, and production hardening remain later phases. Physical-device GPU FPS/touch feel, Safari/Firefox, and actual Vercel redeployment remain unverified; earlier landing performance measurements are not furniture-workspace benchmarks.
 
 ## Next recommended task
 
-After approval, implement **Phase 4 only**: deterministic furniture/wall/furniture overlap and room-boundary findings, conservative clearance envelopes/guidelines, doorway inputs and limited dimension comparisons, visual warnings and layout summaries, with missing-data/provenance-aware wording and geometry edge-case tests. Reuse current placements, normalized asset bounds, transforms, selection/history, and persistence; version saved data explicitly if required fields change. Do not turn simplified checks into delivery/accessibility guarantees.
+After approval, implement **Phase 5 only**: accounts and owned cloud projects, explicit guest import, durable/conflict-aware cloud saving, project operations, thumbnails/storage, immutable snapshots and revocable/expiring read-only sharing, migrations and RLS. Preserve the credential-free guest workflow and existing schema migration/recovery. Real Supabase configuration and two-user/anonymous integration validation are required for that phase's gate; do not claim cloud functionality from mocks alone.
 
 ## Reusable cloud configuration
 
-The existing frozen install remains applicable. Startup instructions are updated for Phase 3, local hydration/recovery, the working catalog/placement workflow, and current checks. Draft persistence is confirmed; publication and restoration in a fresh task remain unverified. Review/save in environment settings, then publish to reuse the prepared environment.
+The existing frozen install remains applicable. Startup instructions are updated for Phase 4, schema 2/migration backups, nominal spatial limits, and current checks. Draft persistence is confirmed; publication and restoration in a fresh task remain unverified. Review/save in environment settings, then publish to reuse the prepared environment.
 
 ## Vercel configuration repair retained
 

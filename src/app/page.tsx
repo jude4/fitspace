@@ -128,8 +128,8 @@ export default function Home() {
               </div>
               <p>
                 Explore the live demo, then create your own measured room.
-                Arrange sample furniture in your measured room. Spatial analysis
-                is next.
+                Arrange sample furniture and review nominal overlap and
+                clearance guidance before checking real measurements.
               </p>
             </div>
             <ol className="steps">

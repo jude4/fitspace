@@ -1,6 +1,6 @@
 # Architecture
 
-Status: architecture baseline from Phase 0. Phases 1–3 implement the shell/demo, measured rooms, sample catalog/placements, unified history, and versioned local persistence. Database/cloud persistence and advanced integrations remain future specifications. Exact installed versions and compatibility evidence are in [DEPENDENCIES.md](DEPENDENCIES.md).
+Status: architecture baseline from Phase 0. Phases 1–4 implement the shell/demo, measured rooms, sample catalog/placements, unified history, nominal spatial analysis, and versioned local persistence. Database/cloud persistence and advanced integrations remain future specifications. Exact installed versions and compatibility evidence are in [DEPENDENCIES.md](DEPENDENCIES.md).
 
 ## Stack and boundaries
 
@@ -23,7 +23,7 @@ src/
     editor/                # panels, commands, Zustand state and history
     rooms/
     catalog/
-    spatial/               # pure geometry and confidence reporting
+    spatial/               # analysis UI and derived-state hook
     projects/              # persistence adapters and autosave
     auth/
     assets/
@@ -31,7 +31,7 @@ src/
     retailers/             # Phase 8
     billing/               # Phase 9
   scene/                   # R3F adapters, materials, lighting, controls
-  domain/                  # schemas, units, scene versions, commands
+  domain/                  # schemas, units, geometry/analysis, versions, commands
   lib/                     # environment validation, service clients
 public/demo/               # licensed optimized assets and attribution
 supabase/migrations/       # Phase 5 onward
@@ -49,7 +49,7 @@ Tests live at root `tests/unit`, `tests/component`, and `tests/e2e`, with fixtur
 - Bounds come from the authoritative physical dimensions in the product/placement record, not arbitrary decorative mesh extents. Distinguish visual mesh bounds from physical bounds. A model/metadata mismatch blocks verified-dimension claims until reviewed.
 - Tolerances: begin with 0.001 m numeric intersection tolerance; keep clearance guidelines independently configurable. Test boundary-touching, numerical precision, rotated objects, and missing data. Tolerance is not measurement accuracy.
 
-### Serializable guest scene contract (implemented version 1)
+### Serializable guest scene contract (implemented version 2; imports version 1)
 
 ```ts
 type Vec3 = { x: number; y: number; z: number };
@@ -78,7 +78,7 @@ type Room = {
   id: string;
   name: string;
   dimensions: Dimensions;
-  openings: []; // Schema 1 has no openings; Opening is a future design.
+  openings: []; // Versions 1–2 have no located openings; Opening is a future design.
   wallMaterialId: string;
   floorMaterialId: string;
 };
@@ -94,9 +94,13 @@ type Placement = {
   materialVariantId: string;
 };
 type SceneDocument = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   room: Room;
   placements: Placement[];
+  spatial: {
+    clearanceMeters: number;
+    doorway: { width: Dimension | null; height: Dimension | null };
+  };
   displayUnits: 'metric' | 'imperial';
 };
 ```
@@ -111,7 +115,7 @@ Products define adjustable axes and allowed ranges; placements copy resolved phy
 
 Commands include set room dimensions, add/update/delete/duplicate placement, change material, and update clearance guideline. Validate commands before commit; changing room size recalculates warnings instead of silently moving furniture. Keep bounded undo history (initially 100 commands), redo clearing on a new edit. Camera and panel settings do not pollute history.
 
-Phase 3 uses versioned local storage with debounced writes, quota/corruption handling, export/recovery strategy, and explicit local-save status. Phase 5 adds an authenticated persistence adapter. Cloud save includes an expected revision; update the scene document and derived room/placement rows atomically in one authorized transaction. On conflict, retain local edits and offer reload or save a copy; do not silently overwrite another session. Acknowledge saved status only after success. A guest import is explicit, owned, and idempotent to avoid duplicates after retries.
+The guest editor uses versioned local storage with debounced writes, quota/corruption handling, export/recovery strategy, and explicit local-save status. Phase 5 adds an authenticated persistence adapter. Cloud save includes an expected revision; update the scene document and derived room/placement rows atomically in one authorized transaction. On conflict, retain local edits and offer reload or save a copy; do not silently overwrite another session. Acknowledge saved status only after success. A guest import is explicit, owned, and idempotent to avoid duplicates after retries.
 
 The versioned scene document is the canonical persisted layout. Normalized room and placement rows are transactional projections for querying; clients cannot independently mutate those projections. Products/assets are separately authoritative catalog records. Immutable scene versions pin the exact document and catalog/asset revisions used.
 
@@ -200,13 +204,13 @@ Measurement validity is not measurement accuracy: samples and user-entered dimen
 
 `src/domain/placements.ts` owns immutable placements, revision/variant/size validation, yaw normalization, rotated planar extents, and deterministic snapping. Physical coordinates use bottom-center X/Z and floor Y=0. Positions must be finite within ±100 m; at most 100 placements are allowed. Rotation is radians internally and degrees in the UI. Bounds are a dimension envelope, not a mesh collision or delivery guarantee.
 
-The existing editor store now keeps `{room, placements}` snapshots in its bounded history. Room creation clears placements atomically and can be undone. Add/update/duplicate/delete commands validate before commit. Surface and furniture selections are mutually exclusive. Presentation state and temporary `dragDraft` remain outside persisted scene/history. Drag movement previews a draft; release commits one update, cancellation drops it. Autosave sees only committed state, never intermediate frames. Invalid edits do not mutate the canonical scene or clear redo.
+Phase 3 introduced `{room, placements}` snapshots (Phase 4 adds `spatial`) in its bounded history. Room creation clears placements atomically and can be undone. Add/update/duplicate/delete commands validate before commit. Surface and furniture selections are mutually exclusive. Presentation state and temporary `dragDraft` remain outside persisted scene/history. Drag movement previews a draft; release commits one update, cancellation drops it. Autosave sees only committed state, never intermediate frames. Invalid edits do not mutate the canonical scene or clear redo.
 
 `src/scene/placed-furniture.tsx` projects captured pointer rays onto Y=0 while disabling OrbitControls during a furniture drag. `CatalogDrop` converts actual viewport drop coordinates through the current camera and commits one add command at the projected point. Numeric transforms bypass drag snapping to preserve exact intent; optional 0.1 m grid and 0.2 m near-wall snapping apply to dragging/dropping. Explicit alignment uses rotated extents at a chosen wall. Neither clamping, collisions, nor fit claims are added ahead of Phase 4.
 
 ### Local format and recovery
 
-The implemented schema 1 is the `SceneDocument` above: schema version, room, placements, and display units. Project IDs/titles, scene versions, openings, and clearance policies are later additions that require explicit compatible migrations/versioning. Current guest imports accept sample/user-entered measurements, optional bounded evidence and nonnegative uncertainty; they do not accept invented manufacturer verification. Unknown object URLs are not loaded: asset IDs must match supported catalog revisions.
+Phase 3 introduced schema 1: schema version, room, placements, and display units. The current schema 2 adds spatial settings as described below. Project IDs/titles, scene versions, and located openings remain later additions requiring explicit compatible migrations/versioning. Current guest imports accept sample/user-entered measurements, optional bounded evidence and nonnegative uncertainty; they do not accept invented manufacturer verification. Unknown object URLs are not loaded: asset IDs must match supported catalog revisions.
 
 `src/domain/scene-document.ts` reconstructs validated plain data from untrusted JSON. It rejects unsupported versions, malformed dimensions/positions, invalid variants/revisions, fixed-item resizing, duplicate IDs, room-reference mismatches, unknown materials, >100 placements, and >1 MiB files. Imports are atomic; successful user imports enter history. No arbitrary data is executed or inserted as HTML.
 
@@ -215,3 +219,23 @@ The implemented schema 1 is the `SceneDocument` above: schema version, room, pla
 Corrupt/future/incompatible data blocks writes and is retained for download. The user can export the current scene, retry/reload saved data, or explicitly replace it. Quota/permission failures retain memory and show an error. Storage events plus expected-raw comparison detect common other-tab changes and pause overwrites; localStorage does not provide transactional compare-and-swap, so this is not a concurrent-editing guarantee. Users should export before conflict resolution. Browser clearing/private-mode limitations remain; no cloud protection is implied.
 
 A tab-local session marker also retains failed/blocked save state across route unmount/remount. Newer unsaved in-memory edits must not be replaced by an older stored copy when returning to the editor, including React development remounts. This marker is not persisted, is not authentication, and cannot recover memory after a full browser refresh.
+
+## Phase 4 implementation notes
+
+### Deterministic geometry and findings
+
+`src/domain/spatial-geometry.ts` implements oriented rectangles, separating-axis intersection, point-to-edge minimum planar distance, and vertical interval overlap. Yaw matches Three.js positive-Y rotation. Numeric penetration must exceed 0.001 m to count as overlap; touching/sub-millimeter contact is not an overlap. Room checks use inner X/Z and height; wall envelopes come from the same `roomGeometry` as rendering, regardless of display visibility. No furniture is automatically moved or blocked by warnings.
+
+`src/domain/spatial-analysis.ts` returns derived structured findings with severity, IDs, provenance, assumptions, and optional nominal gap. Incomplete/nonfinite dimensions or transforms yield cannot-determine outcomes. Rectangular envelopes can overestimate real mesh conflicts. Boundary/clearance results use nominal values and disclose unknown uncertainty; they do not establish a guaranteed clearance under measurement error. Pair clearance uses minimum planar distance only when vertical intervals overlap. The selected outline expands all rectangle sides by the full guideline, conservatively including its corners; it is a spacing visualization, not an accessibility or pathfinding test.
+
+`src/features/spatial/use-spatial-analysis.ts` substitutes draft drag positions without persisting derived findings or polluting history. The same domain engine drives the panel and viewport. Warning bounds use red/amber plus text labels for selected objects and textual findings. The layout summary counts all findings; reports initially render the 60 most severe and expose more on request to bound initial DOM cost at the existing 100-object limit. Presentation toggles remain transient. Desktop paint containment clips offscreen panel overflow to the workspace while each side panel scrolls independently; mobile layouts retain normal document scrolling.
+
+### Spatial settings and doorway scope
+
+Settings contain a validated 0–3 m clearance guideline (default 0.8 m, zero disables it) and nullable clear doorway width/height. Width supports 0.2–5 m; height 0.5–4 m. Settings forms apply only dirty fields so display precision cannot drift untouched canonical values. Spatial input uses meters or explicitly labeled decimal feet. Applied settings join `{room, placements, spatial}` history snapshots; creating an empty room resets settings atomically and is undoable.
+
+Doorway comparison enumerates all six ordered choices of across/vertical physical axes (90° orientations, possibly tipped). It adds declared object uncertainty and subtracts declared opening uncertainty; absent uncertainty stays explicitly unknown. There is no tolerance that widens a clear opening. Results show the candidate axes/margins or no-simple-candidate/additional-measurements-required, always excluding actual delivery determination. The remaining object axis, handling, approach, turns, packaging, door swing, stairs, elevators, diagonal motion, and disassembly require further information. Doorway settings do not create located wall cutouts; `room.openings` stays empty.
+
+### Version 2 and migration recovery
+
+The decoder accepts schema 1 or 2, returning validated version 2 in memory. Version 1 receives default settings; version 2 must supply all valid settings fields. Export/save writes version 2. The historical `fitspace.scene.v1` local-storage key is retained so existing designs are discovered. Before replacing valid version 1 raw storage, save its exact bytes once at `fitspace.scene.v1.backup`; a backup write failure aborts replacement and retains edits in memory. A download control exposes that original backup. Malformed JSON remains blocked until explicit replacement and must not be mistaken for a migration failure. Existing hydration, quota recovery, unsupported-version preservation, cross-tab detection, and failed-save route re-entry behavior remain in force.

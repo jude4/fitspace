@@ -56,3 +56,12 @@ Revisit decisions with evidence and record supersession; do not silently change 
 - **D36:** Persist schema 1 locally after hydration, with a 350 ms debounce, actual acknowledgement, revision validation, 100-object/1 MiB limits, and import/export. Preserve corrupt/future saved data until explicit replacement; never silently reset it to a default scene.
 - **D37:** Provide failure recovery for storage quota/permissions, graphics, invalid imports, and common cross-tab changes. LocalStorage detection is not collaborative locking; cloud ownership/version conflict handling still belongs to Phase 5.
 - **D38:** Keep sample dimension provenance/uncertainty through serialization. Guest imports cannot assert manufacturer verification; a real verifier/merchant authority is not implemented yet. Product revisions and normalized shape envelopes are tested.
+
+## Phase 4 — 2026-11-14
+
+- **D39:** Implement only the approved spatial-analysis phase, reusing existing scene records, renderer transforms, history, catalog, and saving. No new dependencies, services, credentials, or remote assets are needed. Phase 5 remains unstarted.
+- **D40:** Use yaw-oriented physical rectangles with vertical intervals, shared structural wall geometry, and a 1 mm numeric contact tolerance. Bounds are nominal rectangular approximations; sample/estimated provenance and unknown uncertainty prohibit physical-fit guarantees.
+- **D41:** Use a configurable all-sides 0–3 m guideline (default 0.8 m) and minimum planar gaps. Visualize the selected conservative expanded rectangle; expose warnings in text as well as color. Do not imply a continuous route or accessibility assessment.
+- **D42:** Treat the doorway as nullable clear width/height references, not located room geometry. Compare six 90° axis orientations with declared uncertainty, without enlarging openings by an epsilon. Explain exclusions and retain cannot-determine delivery wording even when a dimension candidate exists.
+- **D43:** Include applied settings in scene history and schema 2; derive findings afresh, including drag drafts. Accept schema 1 via explicit tested default migration, retain the existing primary storage key, preserve original version 1 bytes before replacement, and stop saving if backup creation fails.
+- **D44:** Count all findings but progressively render long reports (60 initially) to avoid thousands of initial DOM articles. Keep warning/clearance display toggles outside persisted scenes/history.

@@ -1,14 +1,21 @@
 import { useRef } from 'react';
 import { Plane, Vector3 } from 'three';
-import { Edges, Html } from '@react-three/drei';
+import { Edges, Html, Line } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
 import { findProduct } from '@/domain/catalog';
 import type { Placement } from '@/domain/placements';
 import { formatLength } from '@/domain/units';
 import { useEditorStore } from '@/features/editor/editor-store';
+import { useSpatialAnalysis } from '@/features/spatial/use-spatial-analysis';
 import { FurnitureModel } from './furniture-model';
 const floor = new Plane(new Vector3(0, 1, 0), 0);
-function PlacedObject({ placement: p }: { placement: Placement }) {
+function PlacedObject({
+  placement: p,
+  severity,
+}: {
+  placement: Placement;
+  severity?: 'warning' | 'error';
+}) {
   const {
     selectedPlacementId,
     selectPlacement,
@@ -19,6 +26,9 @@ function PlacedObject({ placement: p }: { placement: Placement }) {
     showBounds,
     measurements,
     units,
+    showSpatialWarnings,
+    showClearance,
+    spatial,
   } = useEditorStore();
   const offset = useRef<{ x: number; z: number } | null>(null);
   const product = findProduct(p.productId, p.productRevision);
@@ -82,12 +92,58 @@ function PlacedObject({ placement: p }: { placement: Placement }) {
       <group scale={[w, h, d]}>
         <FurnitureModel productId={p.productId} color={variant.color} />
       </group>
-      {selected && showBounds && (
+      {((selected && showBounds) || (showSpatialWarnings && severity)) && (
         <mesh position={[0, h / 2, 0]} raycast={() => {}}>
           <boxGeometry args={[w, h, d]} />
           <meshBasicMaterial visible={false} />
-          <Edges color="#526b38" threshold={10} />
+          <Edges
+            color={
+              showSpatialWarnings && severity
+                ? severity === 'error'
+                  ? '#b3503f'
+                  : '#ae853a'
+                : '#526b38'
+            }
+            threshold={10}
+          />
         </mesh>
+      )}
+      {selected && showClearance && spatial.clearanceMeters > 0 && (
+        <Line
+          points={[
+            [
+              -w / 2 - spatial.clearanceMeters,
+              0.018,
+              -d / 2 - spatial.clearanceMeters,
+            ],
+            [
+              w / 2 + spatial.clearanceMeters,
+              0.018,
+              -d / 2 - spatial.clearanceMeters,
+            ],
+            [
+              w / 2 + spatial.clearanceMeters,
+              0.018,
+              d / 2 + spatial.clearanceMeters,
+            ],
+            [
+              -w / 2 - spatial.clearanceMeters,
+              0.018,
+              d / 2 + spatial.clearanceMeters,
+            ],
+            [
+              -w / 2 - spatial.clearanceMeters,
+              0.018,
+              -d / 2 - spatial.clearanceMeters,
+            ],
+          ]}
+          color="#b18a43"
+          lineWidth={1.5}
+          dashed
+          dashSize={0.1}
+          gapSize={0.08}
+          raycast={() => {}}
+        />
       )}
       {selected && measurements && (
         <Html
@@ -99,6 +155,16 @@ function PlacedObject({ placement: p }: { placement: Placement }) {
           <span className="dimension-tag">
             {product.name} · {formatLength(w, units)} × {formatLength(d, units)}{' '}
             × {formatLength(h, units)}
+            {severity && (
+              <small
+                style={{ display: 'block', fontSize: '9px', marginTop: '4px' }}
+              >
+                {severity === 'error'
+                  ? 'Potential geometry conflict'
+                  : 'Clearance guideline to review'}{' '}
+                · see Analysis
+              </small>
+            )}
           </span>
         </Html>
       )}
@@ -107,10 +173,20 @@ function PlacedObject({ placement: p }: { placement: Placement }) {
 }
 export function PlacedFurniture() {
   const placements = useEditorStore((s) => s.placements);
+  const findings = useSpatialAnalysis();
+  const severities = new Map<string, 'warning' | 'error'>();
+  for (const f of findings)
+    if (f.severity !== 'info')
+      for (const id of f.objectIds)
+        if (severities.get(id) !== 'error') severities.set(id, f.severity);
   return (
     <group name="placed-furniture">
       {placements.map((p) => (
-        <PlacedObject key={p.id} placement={p} />
+        <PlacedObject
+          key={p.id}
+          placement={p}
+          severity={severities.get(p.id)}
+        />
       ))}
     </group>
   );

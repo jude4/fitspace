@@ -140,8 +140,8 @@ export function RoomPanel() {
         <Box size={22} strokeWidth={1.3} aria-hidden="true" />
         <h3>First, make room.</h3>
         <p>
-          Arrange sample furniture and inspect its dimensions. Collision and
-          clearance analysis arrive in Phase 4.
+          Arrange samples, then open Analysis to review nominal bounds,
+          overlaps, clearance guidelines, and doorway measurements.
         </p>
       </div>
       <div className="room-scale-note">
