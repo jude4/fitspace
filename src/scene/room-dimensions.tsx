@@ -2,8 +2,8 @@ import { Html, Line } from '@react-three/drei';
 import { formatLength } from '@/domain/units';
 import { useEditorStore } from '@/features/editor/editor-store';
 export function RoomDimensions() {
-  const { room, units, measurements } = useEditorStore();
-  if (!measurements) return null;
+  const { room, units, measurements, selectedPlacementId } = useEditorStore();
+  if (!measurements || selectedPlacementId) return null;
   const w = room.dimensions.width.meters,
     d = room.dimensions.depth.meters,
     h = room.dimensions.height.meters;

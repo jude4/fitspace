@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { SceneBoundary } from '@/components/scene-boundary';
 import { useWebGL } from '@/lib/use-webgl';
 import { elementNames } from '@/domain/room';
+import { findProduct } from '@/domain/catalog';
 import { useEditorStore, type CameraAction } from './editor-store';
 const EditorCanvas = dynamic(() => import('@/scene/editor-canvas'), {
   ssr: false,
@@ -43,6 +44,8 @@ export function EditorViewport() {
   const {
     room,
     selected,
+    selectedPlacementId,
+    placements,
     view,
     visibility,
     grid,
@@ -77,6 +80,28 @@ export function EditorViewport() {
   return (
     <div
       className="editor-viewport"
+      onDragOver={(event) => {
+        if (
+          event.dataTransfer.types.includes('application/x-fitspace-product')
+        ) {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = 'copy';
+        }
+      }}
+      onDrop={(event) => {
+        const productId = event.dataTransfer.getData(
+          'application/x-fitspace-product',
+        );
+        if (!findProduct(productId)) return;
+        event.preventDefault();
+        const canvas = event.currentTarget.querySelector('canvas');
+        if (canvas)
+          canvas.dispatchEvent(
+            new CustomEvent('fitspace-product-drop', {
+              detail: { productId, x: event.clientX, y: event.clientY },
+            }),
+          );
+      }}
       data-testid="editor-viewport"
       data-ready={ready && !failed}
       data-view={view}
@@ -86,6 +111,7 @@ export function EditorViewport() {
       data-wall-material={room.wallMaterialId}
       data-floor-material={room.floorMaterialId}
       data-grid={grid}
+      data-placement-count={placements.length}
       data-measurements={measurements}
       aria-label="Interactive measured room"
     >
@@ -93,7 +119,14 @@ export function EditorViewport() {
         <p className="eyebrow">A BLANK CANVAS, BUILT AROUND YOU</p>
         <span>
           {view === 'overhead' ? 'Overhead plan' : 'Perspective view'} ·{' '}
-          {selected ? elementNames[selected] : 'No selection'}
+          {selectedPlacementId
+            ? findProduct(
+                placements.find((p) => p.id === selectedPlacementId)
+                  ?.productId ?? '',
+              )?.name
+            : selected
+              ? elementNames[selected]
+              : 'No selection'}
           {selected && !visibility[selected] ? ' (hidden)' : ''}
         </span>
       </div>
@@ -134,7 +167,7 @@ export function EditorViewport() {
         ))}
       </div>
       <p className="viewport-hint">
-        Drag to orbit · right-drag to pan · scroll / pinch to zoom
+        Drag furniture to place · drag room to orbit · right-drag to pan
       </p>
     </div>
   );

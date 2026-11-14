@@ -15,16 +15,47 @@ import {
 import { formatArea, formatLength } from '@/domain/units';
 import { useEditorStore } from './editor-store';
 import { DimensionForm } from './dimension-form';
+import { CatalogPanel } from '@/features/catalog/catalog-panel';
+import { findProduct } from '@/domain/catalog';
 export function RoomPanel() {
-  const { room, selected, select, visibility, toggleElement, execute } =
-    useEditorStore();
+  const {
+    room,
+    selected,
+    select,
+    visibility,
+    toggleElement,
+    execute,
+    placements,
+    selectedPlacementId,
+    selectPlacement,
+  } = useEditorStore();
   const [preset, setPreset] = useState<PresetId>('living');
   return (
     <aside
       className="editor-panel rooms-panel"
       aria-label="Room and scene controls"
     >
-      <div className="panel-heading">
+      <div className="room-panel-nav">
+        <button
+          onClick={() =>
+            document
+              .getElementById('sample-catalog')
+              ?.scrollIntoView({ block: 'start', behavior: 'instant' })
+          }
+        >
+          Browse furniture ↓
+        </button>
+        <button
+          onClick={() =>
+            document
+              .getElementById('room-controls')
+              ?.scrollIntoView({ block: 'start', behavior: 'instant' })
+          }
+        >
+          Room controls ↑
+        </button>
+      </div>
+      <div id="room-controls" className="panel-heading">
         <span className="eyebrow">YOUR SPACE</span>
         <h2>Room to begin.</h2>
         <p>A measured foundation for your next idea.</p>
@@ -53,7 +84,7 @@ export function RoomPanel() {
         </Button>
         <p className="editor-help">
           Templates use sample dimensions. Creating a room replaces the current
-          room and can be undone.
+          room and its furniture, and can be undone.
         </p>
       </div>
       <div className="panel-section">
@@ -87,12 +118,30 @@ export function RoomPanel() {
           ))}
         </ul>
       </div>
+      <div className="panel-section">
+        <h3>Placed furniture ({placements.length})</h3>
+        <ul className="element-list" aria-label="Placed furniture">
+          {placements.map((p, i) => (
+            <li key={p.id}>
+              <button
+                className="element-select"
+                aria-label={`Select ${findProduct(p.productId, p.productRevision)?.name} ${i + 1}`}
+                aria-pressed={selectedPlacementId === p.id}
+                onClick={() => selectPlacement(p.id)}
+              >
+                {findProduct(p.productId, p.productRevision)?.name} {i + 1}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <CatalogPanel />
       <div className="next-phase-note">
         <Box size={22} strokeWidth={1.3} aria-hidden="true" />
         <h3>First, make room.</h3>
         <p>
-          Furniture browsing and placement arrive in Phase 3. This editor
-          creates an empty room.
+          Arrange sample furniture and inspect its dimensions. Collision and
+          clearance analysis arrive in Phase 4.
         </p>
       </div>
       <div className="room-scale-note">

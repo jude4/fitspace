@@ -3,6 +3,8 @@ import { Canvas } from '@react-three/fiber';
 import { useEditorStore } from '@/features/editor/editor-store';
 import { EditorCamera } from './editor-camera';
 import { EditorRoom } from './editor-room';
+import { PlacedFurniture } from './placed-furniture';
+import { CatalogDrop } from './catalog-drop';
 import { RoomDimensions } from './room-dimensions';
 import { ContextLifecycle } from './context-lifecycle';
 export default function EditorCanvas({
@@ -38,6 +40,8 @@ export default function EditorCanvas({
         shadow-camera-bottom={-35}
       />
       <EditorRoom />
+      <PlacedFurniture />
+      <CatalogDrop />
       <RoomDimensions />
       <EditorCamera />
       <ContextLifecycle onFailure={onFailure} />

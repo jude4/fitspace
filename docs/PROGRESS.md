@@ -2,42 +2,43 @@
 
 ## Current phase
 
-**Phase 2 — interactive rectangular room builder complete.** The user's next-phase request authorized Phase 2. Phase 3 (catalog and furniture placement) is next and requires explicit approval; it has not started.
+**Phase 3 — catalog and furniture placement complete.** The user's next-phase request authorized Phase 3. Phase 4 (spatial fit analysis) is next and requires explicit approval; it has not started.
 
 ## Completed
 
-- Retained Phase 0 architecture and Phase 1 landing/demo, shared UI, pinned toolchain, and verification infrastructure.
-- Added an independent serializable room model with dimensions in meters, per-axis measurement provenance, material IDs, presets, validation, and six geometry descriptors.
-- Replaced `/workspace`'s upcoming-feature shell with a working guest room builder. Create sample empty rooms; edit clear interior width/depth/height; use metric or whole-feet/decimal-inches input; retain unedited canonical precision.
-- Generated four walls, floor, and ceiling at real scale with structural thickness outside the interior. Added dimension lines/labels, a 0.5 m grid, shared wall/ceiling finishes, and original textured sample floor materials.
-- Added raycast and hierarchy selection, per-surface visibility and all-wall controls, perspective/orthographic overhead views, orbit/pan/zoom, accessible camera buttons, reset, and framing for room size and viewport aspect ratio.
-- Added atomic validated commands with 100-step undo/redo, native-input-safe keyboard shortcuts, input error associations, edit announcements, and explicit unsaved status. Presentation controls do not enter history.
-- Built responsive desktop panels and mobile/tablet panel switching. Shared capability checks, error boundaries, and context lifecycle with the existing demo. Renderer retry preserves the measured room; numeric editing remains usable without WebGL.
-- Updated landing availability copy, documentation, and asset provenance. No new dependencies or credentials were introduced.
+- Retained the working landing/demo, measured rectangular-room editor, existing toolchain, Vercel configuration, and verification infrastructure.
+- Added nine original sample concepts covering sofas, chairs, tables, beds, cabinets, shelves, desks, lamps, and appliances. Every item has complete labeled sample dimensions, revision-pinned procedural assets, variants, searchable/filterable details, illustrative thumbnails, and an interactive 3D preview.
+- Added catalog-to-room dropping, Add buttons, raycast/hierarchy selection, floor dragging, exact X/Z coordinates, yaw rotation, restricted adjustable-width concepts, material variants, duplicate/delete, contextual dimension labels/bounds, optional grid/near-wall snapping, and explicit rotated wall alignment.
+- Extended history to immutable room-plus-placement snapshots. A drag previews transiently and commits one undo step; cancellation drops the draft. Recreating an empty room clears its furniture atomically and is reversible.
+- Added validated schema-1 local persistence after hydration, clear pending/saved/error status, debounced writes, exact revision/dimension round trips, JSON export/import, and preservation/recovery of corrupt or incompatible data. Quota failures retain edits in memory; common other-tab changes pause overwrites.
+- Added accessible numeric controls, native preview dialogs/focus restoration, keyboard Add/selection alternatives, graphics fallback/retry, visible catalog shortcuts, and responsive inspector/catalog layouts. Removed obsolete future-feature copy for available placement functionality.
+- No new packages, credentials, remote models, commercial product specifications, cloud services, or Phase 4 fit logic were introduced.
 
 ## Verification
 
-- Strict typecheck, lint, formatting, unit/component tests, production build, documentation checks, and Chromium browser checks passed; exact evidence is in [TESTING.md](TESTING.md).
-- 39 unit/component tests across 6 files cover actual Three.js interior bounds, numeric/provenance validation, conversions, history, form behavior, camera-fit math, and procedural textures.
-- Full browser suite: 15 passed, including 8 workspace cases. Final workspace polish was followed by another run of all 8 workspace cases. Screenshots reviewed for desktop perspective/overhead, 360 px layout, and the 30 m room extreme.
-- Development `/workspace` served the expected editor, measurement action, and unsaved status.
-- Browser testing found a locator collision with Next.js's route announcer; error assertions now scope to the inspector. Type/lint checks caught engine-object ownership and texture-import issues; corrected before completion. Screenshot review prompted texture filtering and reserved camera-control space so labels remain readable.
+- Typecheck, lint, formatting, production build, unit/component tests, Chromium browser checks, and documentation/diff checks passed; details are in [TESTING.md](TESTING.md).
+- **52 unit/component tests across 8 files** cover the retained room workflow plus catalog coverage/geometry envelopes, transforms and resize restrictions, rotated snapping, unified history, exact scene serialization, revision/provenance validation, hydration, quota errors, and preservation of incompatible data.
+- **24 browser tests** cover the full landing/room/furniture workflow, all nine assets, real pointer dragging with one undo step, catalog floor drop, exact transforms/variants, restricted resize, save/reload, import/export, invalid/future data recovery, quota backup, and other-tab conflict handling. The 9 furniture cases were rerun after final preview recovery checks.
+- Desktop/mobile workspace and product-preview screenshots were visually inspected; preview framing, contextual labels, catalog discoverability, and desktop scroll containment were refined.
+- Development `/workspace` serves the catalog and export controls. No actual Vercel deployment or physical-device performance test is claimed.
 
 ## Known limitations
 
-- Only empty rectangular rooms are supported. Width/depth: 1–30 m; height: 1.8–6 m. Openings, furniture, fit/clearance analysis, local/cloud save, accounts, sharing, AR, AI, retailer integrations, and billing remain later phases.
-- Default templates and finishes are samples. Edited measurements are user-entered, not independently verified. Shared wall/ceiling color does not imply per-wall material editing.
-- Committed edits stay in the current tab; refresh resets the room. Apply draft dimension edits before changing units; unapplied draft fields reset on unit/canonical-dimension changes.
-- Graphics failures retain numeric editing and retry state. Physical-device FPS, Safari/Firefox, and mobile touch feel remain unverified. Phase 1's software-rendering performance limitation remains recorded; it is not a Phase 2 hardware benchmark.
+- Sample furniture is illustrative original geometry, not photorealistic captures, licensed retailer products, verified manufacturer dimensions, operational appliance specifications, prices, or purchase links.
+- Rectangular rooms remain width/depth 1–30 m and height 1.8–6 m. Furniture positions are floor-based (Y=0), bounded to ±100 m; up to 100 placements per scene. Only declared shelf/desk width ranges can resize. Geometry and snapping do not detect collisions or guarantee fit.
+- Local saving holds one scene per browser origin. Browser storage can be cleared, denied, or full; export portable backups. Corrupt/future files remain untouched until explicit replacement. Cross-tab detection is not transactional locking or collaboration.
+- Apply draft form edits before changing selection/units. Camera, history, selection, visibility, snapping preferences, and draft drag state are not persisted; committed scene data and display units are.
+- Cloud projects/auth/sharing, photo assistance, AR, AI, retailer models/imports, billing, and production hardening remain later phases. Current asset IDs are procedural; no remote GLB loading or user model uploads are claimed.
+- Physical-device GPU FPS, Safari/Firefox, and actual mobile touch feel remain unverified. Earlier landing performance measurements are not benchmarks of this larger furniture workspace.
 
 ## Next recommended task
 
-After approval, implement **Phase 3 only**: sample catalog/search/filters/previews, revision-aware product and placement models with honest dimension sources, add/select/move/rotate/numeric transforms, adjustable-only resize, duplicate/delete, variants, bounds, snapping, command history, and versioned local persistence/recovery. Reuse the room model, UI, camera, and rendering boundaries; do not rebuild the landing or room editor. Fit intelligence remains Phase 4.
+After approval, implement **Phase 4 only**: deterministic furniture/wall/furniture overlap and room-boundary findings, conservative clearance envelopes/guidelines, doorway inputs and limited dimension comparisons, visual warnings and layout summaries, with missing-data/provenance-aware wording and geometry edge-case tests. Reuse current placements, normalized asset bounds, transforms, selection/history, and persistence; version saved data explicitly if required fields change. Do not turn simplified checks into delivery/accessibility guarantees.
 
 ## Reusable cloud configuration
 
-The frozen-install script remains applicable. Startup instructions are updated for the real workspace, its current phase, checks, and graphics recovery. Draft configuration is saved for review; publication and restoration in a new task have not been independently validated. Review/save in environment settings, then publish to reuse the prepared environment.
+The existing frozen install remains applicable. Startup instructions are updated for Phase 3, local hydration/recovery, the working catalog/placement workflow, and current checks. Draft persistence is confirmed; publication and restoration in a fresh task remain unverified. Review/save in environment settings, then publish to reuse the prepared environment.
 
-## Vercel configuration repair
+## Vercel configuration repair retained
 
-The reported deployment compiled Next.js successfully, then searched for an incorrect `dist` directory. Added root `vercel.json` selecting the native `nextjs` framework and `.next` output, plus dashboard/root-directory/redeployment instructions in README. This is a scoped deployment configuration fix, not implementation of Phase 9. Local production build and expected `.next` artifacts are verified; an actual Vercel redeployment remains user-run and unverified here.
+Root `vercel.json` selects the native `nextjs` framework and `.next` output. README documents removing an incorrect `dist` override in Vercel settings. Local production builds pass; actual Vercel redeployment remains unverified here. This scoped repair does not implement Phase 9.

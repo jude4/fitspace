@@ -18,6 +18,7 @@ export function EditorCamera() {
     view,
     resetKey,
     cameraAction,
+    dragDraft,
   } = useEditorStore();
   const { camera: defaultCamera, size, invalidate } = useThree();
   const perspectiveRef = useRef<ThreePerspectiveCamera>(null);
@@ -124,6 +125,7 @@ export function EditorCamera() {
         key={view}
         ref={controls}
         makeDefault
+        enabled={!dragDraft}
         enableDamping={false}
         enablePan
         enableRotate={view === 'perspective'}

@@ -3,7 +3,7 @@ import { Workspace } from '@/features/editor/workspace';
 export const metadata: Metadata = {
   title: 'Room builder — FitSpace',
   description:
-    'Create and inspect an empty rectangular room with your measurements.',
+    'Plan a measured rectangular room with sample furniture, exact transforms, and local saving.',
 };
 export default function WorkspacePage() {
   return <Workspace />;
