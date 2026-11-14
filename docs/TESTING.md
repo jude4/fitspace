@@ -78,3 +78,41 @@ Final sample at 2026-11-14 10:14 UTC:
 - Screenshot inspection found oversized foreground plants and narrow-canvas cropping; simplify the composition and fit camera distance to aspect ratio.
 
 No Supabase, AI, Stripe, AR, production deployment, room editing, furniture placement, or persistence tests ran: these capabilities belong to later phases and are not implemented.
+
+## Phase 2 actual results — 2026-11-14
+
+Same pinned Linux/Node/pnpm/Chromium environment as Phase 1; no dependencies added or verification policies relaxed.
+
+| Check                                                                                 | Result                                                                              |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `pnpm typecheck`                                                                      | Passed with strict TypeScript                                                       |
+| `pnpm lint`                                                                           | Passed with the existing ESLint 10 configuration                                    |
+| `pnpm test`                                                                           | 39 passed across 6 files                                                            |
+| `pnpm format:check`                                                                   | Passed                                                                              |
+| `pnpm build`                                                                          | Passed; `/workspace` now serves the working room editor                             |
+| `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium pnpm test:e2e`                 | 15 passed: 7 existing landing tests and 8 workspace tests                           |
+| `... pnpm exec playwright test tests/e2e/workspace.spec.ts` after final visual polish | All 8 workspace tests passed again                                                  |
+| `pnpm dev --port 3001` and local `/workspace` request                                 | Passed; room-builder heading, Apply dimensions action, and Not saved status present |
+| Documentation links/completeness and `git diff --check`                               | Passed                                                                              |
+
+### Coverage and functional evidence
+
+- **Actual scale:** construct Three.js `BoxGeometry` meshes from the same room descriptors used by rendering; inspect `Box3` bounds. For a 4 × 5 × 2.7 m interior, floor top = Y0, ceiling underside = Y2.7, north/south inner faces = Z0/Z5, west/east = X0/X4. Assertions are tighter than 1 mm. Structural thickness extends outward.
+- **Validation/provenance:** zero/negative/nonfinite/oversized widths, low height, unknown material IDs including prototype keys, and missing verification evidence are rejected. Only edited axes become user-entered; room serialization retains source data.
+- **Units:** whole feet plus decimal inches; reject inches ≥12, fractional feet, empty/nonfinite/malformed numbers; normalize rounded display carry. Repeated display toggles and unchanged imperial form submissions preserve canonical precision. Explicitly edited display parts round-trip within 0.013 mm; this is conversion tolerance, not physical measurement accuracy.
+- **History:** room creation, dimensions, and materials undo/redo in order; bounded to 100 snapshots; new edits invalidate redo. Invalid edits and presentation controls do not change scene history. Keyboard shortcuts work outside text inputs.
+- **Camera math:** sphere/frustum tests cover 1 × 1 × 1.8 m, 4 × 5 × 2.7 m, 30 × 30 × 6 m, and long narrow rooms at aspect ratios 0.4, 1, and 2.4. Orthographic bounds contain the floor footprint and margins. Browser tests reframe minimum/maximum sizes and verify visible indicators.
+- **Rendered behavior:** browser screenshots change after material edits, zoom, and pan; actual floor raycasting updates selection. Perspective/overhead controls, dimensions/grid, all-wall and ceiling visibility, invalid-input feedback, presets, imperial input, undo/redo, and room creation work through the UI. Primary journey reports no page/console errors.
+- **Responsive/accessibility:** viewport/panels checked at 360/768/1440 px with no horizontal overflow. Native input labels, error associations, keyboard camera controls, visible focus, live edit status, and alternate hierarchy selection are provided. This is targeted coverage, not a complete accessibility audit or physical touch-device certification.
+- **Graphics failure:** unsupported WebGL leaves numeric editing usable. A real `WEBGL_lose_context` extension event triggers the fallback; renderer retry restores the preview with the edited 6 m width intact.
+- **Materials/resources:** procedural wood/stone/concrete data textures differ, repeat at a consistent scale, use mipmap/linear filtering to reduce aliasing, and are disposed on replacement/unmount. No external assets are fetched.
+
+Desktop perspective and overhead screenshots, 360 px full-page layout, and the 30 m size extreme were visually inspected. Final inspection led to reserving viewport space below the canvas for navigation/labels and adding mipmapped texture filtering. Screenshot artifacts and Playwright traces remain in ignored `test-results/`.
+
+The first full run had 13 passes and one failure caused by an overly broad alert locator matching Next.js's route announcer. The test now scopes to the inspector without weakening the error assertion; the full suite passes. Type/lint errors encountered during implementation were corrected, including missing texture filter imports and moving mutable engine camera ownership to refs. No assertions were disabled.
+
+Physical-GPU frame rates and cross-browser/mobile-device behavior remain unverified. The Phase 1 performance numbers above are historical landing-demo samples, not new benchmarks of the room builder. No persistence, catalog, collision, auth, or later integration tests were run or claimed in this phase.
+
+## Vercel output-directory repair
+
+`pnpm build` passed after adding `vercel.json`. Verified its `nextjs` framework and `.next` output match generated `.next/BUILD_ID` and prerendered home/workspace HTML artifacts. `git diff --check` passed. No application logic changed, so unit/E2E suites were not repeated for this configuration-only fix. The native Vercel builder's official source confirms its `.next` default; actual deployment in the user's Vercel project remains unverified.

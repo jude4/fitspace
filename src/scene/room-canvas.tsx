@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { Vector3 } from 'three';
 import { cameraViews, type CameraView, type PaletteId } from '@/domain/demo';
 import { RoomGeometry } from './room-geometry';
+import { ContextLifecycle } from './context-lifecycle';
 
 function Camera({ view, resetKey }: { view: CameraView; resetKey: number }) {
   const { camera, invalidate, size } = useThree();
@@ -20,15 +21,6 @@ function Camera({ view, resetKey }: { view: CameraView; resetKey: number }) {
     camera.updateProjectionMatrix();
     invalidate();
   }, [camera, view, invalidate, resetKey, size.width, size.height]);
-  return null;
-}
-function ContextLifecycle({ onFailure }: { onFailure: () => void }) {
-  const { gl } = useThree();
-  useEffect(() => {
-    const canvas = gl.domElement;
-    canvas.addEventListener('webglcontextlost', onFailure);
-    return () => canvas.removeEventListener('webglcontextlost', onFailure);
-  }, [gl, onFailure]);
   return null;
 }
 export default function RoomCanvas({

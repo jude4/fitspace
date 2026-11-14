@@ -12,7 +12,7 @@ Acceptance: all eight required documentation files exist and agree on scope and 
 
 ## Phase 1 — Foundation, design system, landing page
 
-**Status:** Complete (2026-11-14); physical-device performance validation remains a documented limitation. Phase 2 requires separate approval.
+**Status:** Complete (2026-11-14); physical-device performance validation remains a documented limitation. Phase 2 was subsequently authorized and implemented; see its gate below.
 
 Sequence: consult official compatibility docs → pin Node/pnpm/framework/renderer versions → initialize Next.js strict TypeScript/Tailwind/shadcn primitives → configure Vitest/RTL/Playwright/ESLint/formatting → create navigation and responsive landing → procedural live room → verify.
 
@@ -28,7 +28,7 @@ Acceptance:
 
 ## Phase 2 — Interactive rectangular room builder
 
-**Status:** Not started; depends on approved Phase 1.
+**Status:** Complete (2026-11-14). Phase 3 requires separate approval.
 
 Deliver: room creation/presets; positive width/depth/height inputs; metric/imperial display; provenance; generated floor/walls/ceiling; dimension labels; wall/floor materials; perspective/overhead view; orbit/pan/zoom; room-element selection; wall visibility/grid toggles; camera reset and framing; editor panels/toolbar; command-based undo/redo.
 

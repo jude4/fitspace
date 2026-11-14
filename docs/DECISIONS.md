@@ -31,3 +31,18 @@ Revisit decisions with evidence and record supersession; do not silently change 
 - **D20:** Opt-in camera animation, demand rendering at rest, reduced-motion enforcement, responsive framing, and software-renderer quality reduction balance interaction and resource use. Actual physical-device performance remains unverified.
 - **D21:** Reset the existing camera and clean up context-loss subscriptions. Browser testing exposed a false failure when a reset recreated the canvas; the implementation and regression check now avoid that lifecycle error.
 - **D22:** Keep shell server-rendered and defer Three.js to a client dynamic import. No credentials, backend services, persistence, room editor, or catalog are introduced ahead of their phase.
+
+## Phase 2 — 2026-11-14
+
+- **D23:** The user's next-phase request authorizes the rectangular room builder only. Keep catalog, placements, fit checks, and saving out of scope until their respective phases; update landing availability copy to reflect the working room editor.
+- **D24:** Limit width/depth to 1–30 m and height to 1.8–6 m for bounded geometry and predictable input/camera behavior. Use clear interior dimensions; fixed 0.12 m structural thickness extends outward.
+- **D25:** Start with sample presets and mark only manually edited axes as user-entered. Display conversion never mutates room dimensions; imperial input uses whole feet and decimal inches below 12. Do not round canonical values through the display representation.
+- **D26:** Use validated immutable room-command results and a bounded 100-snapshot history. Creating another empty room is undoable. Keep presentation/camera preferences out of room history and preserve native undo in text inputs.
+- **D27:** Select surfaces by raycasting or a keyboard-accessible hierarchy. Wall/ceiling finish is shared across those surfaces in this phase, explicitly labeled; floor finish is separate. Per-wall finish assignment is not claimed.
+- **D28:** Use perspective sphere framing and orthographic overhead bounds at every supported size/aspect ratio. Reset existing camera objects instead of recreating WebGL. Mutate owned engine objects through refs, keeping React state immutable.
+- **D29:** Reuse Phase 1 capability/error/context handling through shared components/hooks. A failed renderer can retry without discarding the room. Do not reload the page as the editor's recovery action because this phase has no persistence.
+- **D30:** Generate lightweight original floor finish textures rather than add external assets/dependencies. Retain demand rendering and software-renderer quality reduction; hardware/cross-browser performance remains unverified.
+
+## Vercel output repair
+
+- **D31:** Override the mistaken static-site output configuration with root `vercel.json` (`framework: nextjs`, `outputDirectory: .next`). Keep the existing Next.js build and rendering model; prerendered routes do not require `output: export`. Verified Vercel's official Next.js builder uses `config.outputDirectory || '.next'`. This does not authorize unrelated Phase 9 implementation.
