@@ -1,5 +1,7 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
+import Link from 'next/link';
+import type { SaveState } from './local-scene';
 import { Brand } from '@/components/brand';
 import { Button } from '@/components/ui/button';
 import { formatArea } from '@/domain/units';
@@ -12,10 +14,16 @@ import { useLocalScene } from './local-scene';
 import { SceneStorageControls } from './scene-storage-controls';
 import './workspace.css';
 import { AnalysisPanel } from '@/features/spatial/analysis-panel';
-export function Workspace() {
+export type WorkspaceSession = SaveState & {
+  label: string;
+  name: string;
+  controls: ReactNode;
+};
+export function Workspace({ session }: { session?: WorkspaceSession }) {
   const { room, units, undo, redo, announcement, selectedPlacementId } =
     useEditorStore();
-  const storage = useLocalScene();
+  const localStorage = useLocalScene(!session);
+  const storage = session ?? localStorage;
   const [panel, setPanel] = useState<'room' | 'properties' | 'analysis'>(
     'properties',
   );
@@ -47,16 +55,20 @@ export function Workspace() {
       <header className="workspace-header">
         <Brand />
         <div className="project-heading">
-          <span>{room.name}</span>
+          <span>{session?.name ?? room.name}</span>
           <small data-testid="save-status" role="status" aria-live="polite">
-            Guest ·{' '}
+            {session?.label ?? 'Guest'} ·{' '}
             {storage.status === 'saved'
-              ? 'Saved on this device'
+              ? session
+                ? 'Saved to cloud'
+                : 'Saved on this device'
               : storage.status === 'saving'
                 ? 'Saving…'
                 : storage.status === 'loading'
                   ? 'Loading…'
-                  : 'Not saved locally'}
+                  : session
+                    ? 'Not saved to cloud'
+                    : 'Not saved locally'}
           </small>
         </div>
         <HistoryControls />
@@ -71,7 +83,9 @@ export function Workspace() {
         >
           Layout analysis
         </Button>
-        <span className="phase-badge">ROOM & FURNITURE</span>
+        <Link className="cloud-project-link" href="/projects">
+          Projects
+        </Link>
       </header>
       <main id="main" className="workspace-main">
         <h1 className="sr-only">FitSpace room builder</h1>
@@ -123,7 +137,8 @@ export function Workspace() {
                 interior floor area
               </span>
               <span>
-                Local save · Nominal-envelope guidance, not a fit guarantee
+                {session ? 'Cloud project' : 'Local save'} · Nominal-envelope
+                guidance, not a fit guarantee
               </span>
             </div>
           </section>
@@ -135,7 +150,11 @@ export function Workspace() {
             ) : (
               <Inspector />
             )}
-            <SceneStorageControls storage={storage} />
+            {session ? (
+              session.controls
+            ) : (
+              <SceneStorageControls storage={localStorage} />
+            )}
           </div>
         </div>
       </main>

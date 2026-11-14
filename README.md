@@ -2,7 +2,7 @@
 
 **See it. Place it. Know it fits.**
 
-An interactive 3D interior-planning project, developed in explicitly approved phases. Phases 1–4 provide a responsive landing, measured rectangular rooms, a sample furniture catalog, interactive placement, nominal spatial analysis, and versioned local saving. Accounts, cloud projects, and commercial integrations follow later.
+An interactive 3D interior-planning project, developed in explicitly approved phases. Phases 1–5 provide a responsive landing, measured rectangular rooms, sample furniture, nominal spatial analysis, local saving, and optional accounts/cloud projects. Commercial integrations follow later.
 
 ## Run locally
 
@@ -18,7 +18,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-pnpm's store/cache/state use sibling directories configured in `.npmrc`; no secrets or external services are needed. Normal local machines may use their standard XDG locations. Cloud tasks are already isolated: use the existing checkout rather than creating a worktree unless requested.
+pnpm's store/cache/state use sibling directories configured in `.npmrc`; the guest workflow needs no credentials or services. For accounts, run `pnpm supabase:start` with Docker available before starting the app; see [Supabase setup](docs/SUPABASE.md). Normal local machines may use their standard XDG locations. Cloud tasks are already isolated: use the existing checkout rather than creating a worktree unless requested.
 
 `pnpm build` produces the production bundle; `pnpm start` serves it. Stop your development server before running the production browser suite on the default port, or choose a separate dev port with `pnpm dev --port 3001`.
 
@@ -29,7 +29,7 @@ pnpm's store/cache/state use sibling directories configured in `.npmrc`; no secr
 - Drag to orbit, wheel/pinch to zoom, front view, camera reset, and optional slow camera motion. Motion pauses offscreen and is disabled by reduced-motion preference.
 - Lazy-loaded WebGL renderer, loading/error states, unavailable-WebGL and context-loss fallbacks, capped resolution, and automatic lower rendering quality for detected software renderers or low-core devices.
 - `/workspace` creates a rectangular room from sample templates or your interior measurements. Add, drag, rotate, inspect, and arrange original sample furniture; recover the scene after refresh using local device storage.
-- `/projects` and `/business` still describe future functionality; accounts and commercial integrations are not available.
+- `/projects` provides passwordless email sign-in and owned cloud project management when Supabase is configured. `/business` still describes planned commercial integrations.
 
 ## Room builder and furniture editor (Phases 2–4)
 
@@ -39,7 +39,7 @@ Use **m** or **ft / in** to change display. Imperial entry uses whole feet plus 
 
 Switch perspective/overhead views, drag to orbit, right-drag to pan, and scroll/pinch to zoom. Equivalent camera buttons support keyboard users. Frame/reset fits the supported room size and viewport aspect ratio. Measurement labels and a 0.5 m grid can be toggled. Undo/redo buttons and Ctrl/⌘ Z, Ctrl/⌘ Shift Z (or Ctrl Y) restore committed room edits; text inputs retain their native editing shortcuts. Camera, unit, selection, and visibility changes do not enter history.
 
-On small screens, use **Room & scene**, **Properties**, and **Analysis** to switch panels. Numeric editing remains available without WebGL. A graphics retry preserves the current scene. Valid scenes save automatically on this device; cloud saving is not available.
+On small screens, use **Room & scene**, **Properties**, and **Analysis** to switch panels. Numeric editing remains available without WebGL. A graphics retry preserves the current scene. Guest scenes save automatically on this device. Use **Projects** for separate owned cloud designs.
 
 ## Sample furniture and local saving
 
@@ -51,7 +51,7 @@ Optional drag snapping uses a 0.1 m grid and a 0.2 m near-wall threshold; explic
 
 The header reports **Saving**, **Saved on this device**, or **Not saved locally**. Saving is debounced, so wait for acknowledgement before closing. The local format pins product/asset revisions and dimensions. Export a JSON backup; import validates the file before replacing the design and can be undone. Schema versions 1 and 2, supported sample asset revisions, and files ≤1 MiB are accepted; exports use version 2, including spatial settings. Version 1 scenes migrate with a default 0.8 m guideline and unknown doorway dimensions. Before rewriting a version 1 local scene, the exact original is backed up and can be downloaded with **Download pre-upgrade backup**. If that backup fails, saving stops and preserves the original. Imported sample/user-entered provenance never becomes manufacturer verification.
 
-Corrupt, future-version, or incompatible saved data is preserved until you explicitly replace it. Recovery controls let you download the saved data, export the in-memory scene, retry/reload, or replace the stored copy. Quota/permission errors retain edits in memory and do not claim success. Another-tab changes pause autosaving until resolved; this is basic conflict detection, not collaborative locking. Browser storage can be cleared or unavailable; exported backups are the portable recovery path. Cloud/account saving remains Phase 5.
+Corrupt, future-version, or incompatible saved data is preserved until you explicitly replace it. Recovery controls let you download the saved data, export the in-memory scene, retry/reload, or replace the stored copy. Quota/permission errors retain edits in memory and do not claim success. Another-tab changes pause autosaving until resolved; this is basic conflict detection, not collaborative locking. Browser storage can be cleared or unavailable; exported backups are the portable recovery path. Account projects use separate cloud saving; guest storage is never silently promoted or overwritten.
 
 ## Spatial analysis (Phase 4)
 
@@ -63,16 +63,31 @@ Enter clear doorway width **0.2–5 m** and height **0.5–4 m**, or leave eithe
 
 Compare selected/other object width, depth, and height in the comparison table. The summary counts every finding; long reports initially display the 60 most severe entries, with **Show more findings** for the remainder. Applied spatial settings participate in undo/redo, JSON import/export, and local saving. Warning visibility and clearance-outline toggles remain transient.
 
+## Accounts, cloud projects, and sharing (Phase 5)
+
+Open **Projects** to sign in or register with a six-digit email code. A new code replaces password-reset workflows. The local development stack delivers mail to Mailpit; hosted projects need the documented email templates and SMTP configuration. Without a Supabase connection, the account page explains availability and keeps the guest route usable.
+
+Create, rename, duplicate, or delete owned projects. **Import guest design** explicitly copies the current guest scene into a new cloud project; signing in does not import it. Copies receive independent room/placement IDs, preserving measurements, transforms, variants, and catalog revisions. Original plan-preview PNGs are generated and stored privately.
+
+Cloud edits autosave with revision checks and truthful acknowledgement. Concurrent edits pause with a conflict; failed saves retain edits in the current tab. Use **Export current scene**, **Retry cloud save**, **Reload cloud copy**, or **Save as new project** to recover. Same-account sign-in can resume retained edits; changing accounts or signing out clears private caches. Guest browser storage remains separate. Export unsaved work before closing/reloading the tab or signing out.
+
+**Create snapshot link** shares only the saved revision for 1, 7, or 30 days. Copy the returned link immediately; only its hash is stored. The viewer can orbit/pan/zoom the read-only 3D scene and read labeled dimensions. Links can be revoked; subsequent project edits do not change existing snapshots. Revocation stops future reads and cannot recall downloaded content. Sharing does not expose owner identity, general project access, or private thumbnail paths.
+
+Local Supabase validation is described in [SUPABASE.md](docs/SUPABASE.md), including migrations, authorization tests, environment values, and hosted deployment prerequisites. Hosted email delivery and deployment are not implied by local test success.
+
 ## Checks
 
 ```bash
 pnpm typecheck
 pnpm lint
 pnpm test
+# With local Supabase running:
+pnpm test:integration
 pnpm format:check
 pnpm build
 # Use an installed compatible Playwright browser, or the environment's Chromium:
-PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium pnpm test:e2e
+FITSPACE_SUPABASE_E2E=1 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium pnpm test:e2e
+# Omit FITSPACE_SUPABASE_E2E when running guest tests without the local backend.
 # With the production server running, record a 30-second lab rendering sample:
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium pnpm measure:demo
 ```
@@ -96,6 +111,7 @@ The `○ (Static) prerendered as static content` build summary is normal: it des
 - [Progress and next task](docs/PROGRESS.md)
 - [Decisions](docs/DECISIONS.md)
 - [Dependency compatibility evidence](docs/DEPENDENCIES.md)
+- [Supabase setup and cloud behavior](docs/SUPABASE.md)
 - [Asset provenance](docs/ASSETS.md) and [third-party notices](THIRD_PARTY_NOTICES.md)
 
-Meters are the canonical geometry unit. Demo furniture and dimensions are samples, not verified retailer products. Simplified checks do not guarantee physical fit or delivery. No supplied reference photos are redistributed. Supabase, AI, AR, and Stripe configuration is deferred to the relevant phase; never store secrets in Git or chat.
+Meters are the canonical geometry unit. Demo furniture and dimensions are samples, not verified retailer products. Simplified checks do not guarantee physical fit or delivery. No supplied reference photos are redistributed. Supabase is optional for guests; AI, AR, and Stripe remain later phases; never store secrets in Git or chat.

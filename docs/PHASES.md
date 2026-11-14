@@ -44,7 +44,7 @@ Acceptance: at least one sample in each named category has complete positive sam
 
 ## Phase 4 — Spatial fit analysis
 
-**Status:** Complete (2026-11-14). Nominal envelope analysis and dimension-only doorway checks passed the gate; real delivery/accessibility guarantees are excluded. Phase 5 requires separate approval.
+**Status:** Complete (2026-11-14). Nominal envelope analysis and dimension-only doorway checks passed the gate; real delivery/accessibility guarantees are excluded. Phase 5 was subsequently authorized and implemented; see its gate below.
 
 Deliver: room boundaries, furniture/wall and furniture/furniture potential intersections, configurable clearance visualization, doorway inputs and limited dimension comparisons, object comparisons, layout summary, understandable warnings and missing-data outcomes.
 
@@ -52,7 +52,7 @@ Acceptance: fixture tests cover disjoint/touching/overlapping/rotated furniture,
 
 ## Phase 5 — Accounts and cloud projects (MVP milestone)
 
-**Status:** Not started; depends on approved Phase 4.
+**Status:** Complete (2026-11-14), validated with real local Supabase as explicitly selected. Hosted deployment/SMTP remain unverified. Phase 6 requires separate approval.
 
 Deliver: Supabase auth (registration/login/logout/reset or supported passwordless flow), dashboard/project create/rename/duplicate/delete, local guest import, owned cloud save/load/autosave with conflict handling, thumbnails, secure asset storage, versioned scenes, expiring/revocable read-only snapshot shares, RLS and migrations.
 

@@ -15,7 +15,7 @@ let retainedSession: {
   state: SaveState;
   expectedRaw: string | null;
 } | null = null;
-export function useLocalScene() {
+export function useLocalScene(enabled = true) {
   const [state, setState] = useState<SaveState>({
     status: 'loading',
     message: 'Loading local scene…',
@@ -27,6 +27,7 @@ export function useLocalScene() {
     reload: () => void;
   } | null>(null);
   useEffect(() => {
+    if (!enabled) return;
     let timer: ReturnType<typeof setTimeout> | undefined,
       blocked = false,
       expectedRaw: string | null = null,
@@ -203,7 +204,7 @@ export function useLocalScene() {
       window.removeEventListener('storage', storage);
       window.removeEventListener('pagehide', flush);
     };
-  }, []);
+  }, [enabled]);
   return {
     ...state,
     retry: () => actions.current?.retry(),

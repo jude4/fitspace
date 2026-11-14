@@ -10,6 +10,7 @@ export function Header() {
         <Link href="/#possibilities">The possibilities</Link>
         <Link href="/#how-it-works">How it works</Link>
         <Link href="/business">For professionals</Link>
+        <Link href="/projects">Projects</Link>
       </nav>
       <Button asChild size="sm">
         <Link href="/workspace">

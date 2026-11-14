@@ -1,15 +1,20 @@
-import { FuturePage } from '@/components/future-page';
+import { Header } from '@/components/header';
+import { ProjectsDashboard } from '@/features/projects/projects-dashboard';
+import '@/features/projects/projects.css';
+export const metadata = { title: 'Your projects — FitSpace' };
 export default function Projects() {
   return (
-    <FuturePage
-      eyebrow="YOUR PROJECTS · PLANNED FOR PHASE 5"
-      title="Good ideas deserve a home."
-      description="Accounts and cloud projects are planned for a later phase. There is no sign-in or cloud storage in this release."
-      items={[
-        'Save and reopen your own projects.',
-        'Manage project versions and clear save status.',
-        'Share a read-only snapshot with a revocable link.',
-      ]}
-    />
+    <>
+      <Header />
+      <main id="main" className="projects-page section-wrap">
+        <p className="eyebrow">YOUR SPACE, SAVED</p>
+        <h1>Your projects.</h1>
+        <p>
+          Keep your guest design on this device, or sign in to save owned cloud
+          projects.
+        </p>
+        <ProjectsDashboard />
+      </main>
+    </>
   );
 }
