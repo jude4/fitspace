@@ -42,8 +42,8 @@ export function FuturePage({
           </Button>
         </div>
         <p className="quiet-note">
-          Accounts and cloud saving are not available yet. The guest room and
-          sample furniture editor are available now.
+          The guest room and sample furniture editor are available now. Accounts
+          and cloud projects are available when Supabase is configured.
         </p>
       </main>
     </>

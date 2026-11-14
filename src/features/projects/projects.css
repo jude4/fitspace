@@ -1,0 +1,209 @@
+.projects-page {
+  padding-top: 70px;
+  padding-bottom: 80px;
+  max-width: 1200px;
+}
+.projects-page h1 {
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 400;
+  margin: 15px 0;
+}
+.projects-page h2 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 25px;
+  margin: 20px 0;
+}
+.projects-page p {
+  line-height: 1.7;
+  color: #727c66;
+  font-size: 14px;
+}
+.account-form,
+.project-create {
+  padding: 26px;
+  border: 1px solid #d9dece;
+  border-radius: 6px;
+  margin: 28px 0;
+  max-width: 650px;
+  background: #fafbf5;
+}
+.account-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+.account-form label,
+.project-create label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  width: 100%;
+  max-width: 400px;
+}
+.account-form input,
+.project-create input,
+.cloud-controls input,
+.cloud-controls select {
+  border: 1px solid #ced7bd;
+  border-radius: 3px;
+  padding: 12px;
+  background: #fff;
+  width: 100%;
+  color: #3c4932;
+}
+.account-form a {
+  font-size: 13px;
+  text-decoration: underline;
+}
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.project-account {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 28px 0;
+}
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 20px;
+}
+.project-card {
+  border: 1px solid #d9dece;
+  border-radius: 5px;
+  background: #fafbf5;
+  padding: 20px;
+}
+.project-card img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  background: #f4f4ef;
+}
+.project-card h3 {
+  font:
+    24px Georgia,
+    serif;
+  margin: 18px 0;
+}
+.project-card h3 a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.project-card p {
+  font-size: 12px;
+}
+.projects-page [role='alert'],
+.cloud-controls [role='alert'] {
+  color: #9a4635;
+  line-height: 1.6;
+}
+.cloud-controls {
+  font-size: 11px;
+  padding: 20px;
+  border-top: 1px solid #d9dece;
+}
+.cloud-controls h3 {
+  font:
+    19px Georgia,
+    serif;
+}
+.cloud-controls p {
+  line-height: 1.7;
+}
+.cloud-controls .button {
+  font-size: 10px;
+  min-height: 34px;
+  padding: 7px 10px;
+}
+.cloud-controls label {
+  display: block;
+  margin: 15px 0 8px;
+}
+.cloud-controls li {
+  margin: 15px 0;
+  line-height: 1.6;
+  list-style: none;
+}
+.cloud-controls ul {
+  padding: 0;
+}
+.cloud-controls code {
+  overflow-wrap: anywhere;
+}
+.cloud-controls .project-actions {
+  gap: 7px;
+}
+
+.shared-page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 30px 20px;
+}
+.shared-page h1 {
+  font:
+    40px Georgia,
+    serif;
+}
+.shared-canvas {
+  height: 65dvh;
+  min-height: 340px;
+  background: #e9ebe0;
+  border-radius: 5px;
+  position: relative;
+}
+.shared-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+}
+.shared-list li {
+  background: #f0f3e9;
+  padding: 15px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.shared-page p {
+  line-height: 1.8;
+}
+.shared-page canvas {
+  touch-action: none;
+}
+@media (max-width: 760px) {
+  .projects-page {
+    padding-top: 30px;
+  }
+  .account-form,
+  .project-create {
+    padding: 20px;
+  }
+  .workspace-header .cloud-project-link {
+    font-size: 9px;
+    padding: 6px;
+  }
+  .workspace-header {
+    gap: 10px;
+  }
+  .cloud-controls {
+    font-size: 12px;
+  }
+  .cloud-controls .button {
+    font-size: 12px;
+  }
+}
+
+.project-card h3,
+.project-account p {
+  overflow-wrap: anywhere;
+}

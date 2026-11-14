@@ -3,8 +3,8 @@ import { beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { render, screen, waitFor, act, cleanup } from '@testing-library/react';
 import { useLocalScene, LOCAL_SCENE_KEY } from '@/features/editor/local-scene';
 import { useEditorStore } from '@/features/editor/editor-store';
-function Probe() {
-  const state = useLocalScene();
+function Probe({ enabled = true }: { enabled?: boolean }) {
+  const state = useLocalScene(enabled);
   return (
     <>
       <output>{state.status}</output>
@@ -174,4 +174,17 @@ it('can explicitly replace malformed JSON without migration inspection blocking 
     JSON.parse(localStorage.getItem(LOCAL_SCENE_KEY)!).room.dimensions.width
       .meters,
   ).toBe(6);
+});
+
+it('disabled guest saving neither hydrates nor writes a private cloud scene', async () => {
+  const original = '{"schemaVersion":999,"private":"guest recovery data"}';
+  localStorage.setItem(LOCAL_SCENE_KEY, original);
+  useEditorStore
+    .getState()
+    .execute({ type: 'dimensions', values: { width: 7 } });
+  render(<Probe enabled={false} />);
+  await new Promise((resolve) => setTimeout(resolve, 450));
+  expect(localStorage.getItem(LOCAL_SCENE_KEY)).toBe(original);
+  expect(useEditorStore.getState().room.dimensions.width.meters).toBe(7);
+  expect(screen.getByText('loading')).toBeInTheDocument();
 });

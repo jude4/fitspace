@@ -11,3 +11,14 @@ Reviewed 2026-11-14 before installation:
 - Vite is used only by Vitest; the Next.js application uses its own build pipeline. No unused Vite React plugin is installed.
 
 No verification bypasses are used. pnpm retains registry integrity/supply-chain checks. Package release-age exceptions automatically recorded by pnpm are explicit version-specific entries, not TLS/signature/checksum overrides.
+
+## Phase 5 additions — 2026-11-14
+
+Reviewed before installation: [official Supabase SSR README](https://github.com/supabase/ssr), [Supabase JS support policy](https://github.com/supabase/supabase-js), [CLI local-development instructions](https://github.com/supabase/cli), and the installed Next.js authentication/data-security/cookies/Proxy guides. Application authentication occurs in Route Handlers, so cookies can refresh there; it does not trust client `getSession()` for authorization.
+
+- `@supabase/supabase-js` **2.119.0** declares Node >=22, compatible with the existing Node 24.22.1.
+- `@supabase/ssr` **0.12.7** declares Supabase JS ^2.114.0, including the pinned JS version. It replaces deprecated framework-specific auth helpers. Cookie `getAll`/`setAll` integrate with Next's asynchronous cookie API.
+- `server-only` **0.0.1** marks database/configuration/API helpers as server code.
+- Dev-only Supabase CLI **3.1.0** supplies its platform executable. Its supported `SUPABASE_HOME` override avoids writing outside the managed writable workspace. Docker **29.9.2** and the CLI's local PostgreSQL 17/Auth/PostgREST/Storage/Mailpit services were exercised; no system Bun installation is needed.
+
+Versions and integrity data are pinned in the lockfile. No dependency/framework upgrades, peer overrides, TLS changes, or service credentials were introduced to the guest application. `pnpm supabase:start` verifies actual local health and prepares ignored local bindings; see [SUPABASE.md](SUPABASE.md) for managed-image repairs and limits.

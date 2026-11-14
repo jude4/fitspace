@@ -1,6 +1,6 @@
 # Architecture
 
-Status: architecture baseline from Phase 0. Phases 1–4 implement the shell/demo, measured rooms, sample catalog/placements, unified history, nominal spatial analysis, and versioned local persistence. Database/cloud persistence and advanced integrations remain future specifications. Exact installed versions and compatibility evidence are in [DEPENDENCIES.md](DEPENDENCIES.md).
+Status: architecture baseline from Phase 0. Phases 1–5 implement the shell/demo, measured rooms, catalog/placements, spatial analysis, local saving, and optional Supabase accounts/cloud projects. Later integrations remain future specifications. Exact installed versions and compatibility evidence are in [DEPENDENCIES.md](DEPENDENCIES.md).
 
 ## Stack and boundaries
 
@@ -239,3 +239,29 @@ Doorway comparison enumerates all six ordered choices of across/vertical physica
 ### Version 2 and migration recovery
 
 The decoder accepts schema 1 or 2, returning validated version 2 in memory. Version 1 receives default settings; version 2 must supply all valid settings fields. Export/save writes version 2. The historical `fitspace.scene.v1` local-storage key is retained so existing designs are discovered. Before replacing valid version 1 raw storage, save its exact bytes once at `fitspace.scene.v1.backup`; a backup write failure aborts replacement and retains edits in memory. A download control exposes that original backup. Malformed JSON remains blocked until explicit replacement and must not be mistaken for a migration failure. Existing hydration, quota recovery, unsupported-version preservation, cross-tab detection, and failed-save route re-entry behavior remain in force.
+
+## Phase 5 implementation notes
+
+### Authenticated API boundary
+
+`src/lib/supabase/server.ts` creates a fresh SSR client per request using only the configured publishable/anonymous key and HttpOnly/SameSite=Lax cookies. It rejects service/secret keys and non-HTTPS remote configuration. The application uses no administrative credential. Private APIs call Auth `getUser()` and rely on the user's database/storage role. Static page shells contain no private data; authenticated APIs deliver uncached DTOs, so no private RSC data cache or auth-only proxy is needed. Cookie refresh can be written in Route Handlers. Mutations validate JSON size, scene data, identifiers and the browser origin, accommodating Next's internal reverse-proxy URL through the Host header/configured application origin.
+
+`/api/auth` implements request/verify email OTP and local-session sign-out. New and existing users follow the same passwordless flow. Account changes carry only the verified user ID to other tabs, never auth tokens. Explicit sign-out/different-owner changes clear private memory and hard-navigate to clear router caches. Same-owner sign-in keeps that owner's unsaved scenes and resumes unauthorized writes with their original request UUID/revision. Server authorization is still checked on every request; broadcasts confer no server permission.
+
+### Canonical cloud records and transactions
+
+`supabase/migrations` creates eight private RLS tables: profiles, projects, rooms, placements, scene_versions, assets, sharing_permissions and asset_cleanup_jobs. Direct project/scene/projection writes are revoked. Security-definer transaction functions use empty search paths, explicit `auth.uid()` ownership and narrow role grants. A frozen schema-2 JSON contract checks dimensions, sources, material/catalog revisions, ranges and object shapes in the database; an additional check enforces room links and unique placement IDs. API parsing retains the existing stricter guest decoder and compatible version-1 migration.
+
+Create/import retries use an owner-scoped request UUID and advisory transaction lock. Saves lock the owned project, acknowledge an existing request before checking its original expected revision, then update canonical scene, normalized room/placement projections and an immutable version atomically. Rename creates another revision of the same scene. Idempotent retries return their own committed revision, not a newer unrelated revision that would permit stale overwrites. Duplicate/import copy scene content with new room/placement IDs and separately generated assets. Catalog revision pins remain unchanged.
+
+### Editor isolation and recovery
+
+The existing `Workspace` accepts a cloud session; its guest hook is disabled in that mode. `CloudWorkspace` temporarily loads the cloud document into the existing editor, preserves/restores the guest store on route exit, and subscribes only to committed changes. Private cloud scenes never enter guest localStorage. `SaveCoordinator` serializes debounced writes and retains pending request data until acknowledgement. Newer edits queue behind the exact in-flight snapshot. Errors/conflicts/auth failures retain memory and block unsafe retries. Export, explicit reload, save-copy, and same-tab route recovery remain available; closing a tab can lose unsaved memory.
+
+### Assets, snapshots, and deletion
+
+The server creates original bounded PNG plan diagrams from validated numeric geometry; it does not decode arbitrary uploads. A private PNG/size-limited bucket scopes reads/deletes to owner paths and inserts to existing owned projects. Metadata ties paths to exact scene versions. Authenticated uncached routes serve thumbnails. The owner may read/delete their own orphan paths solely to finish cleanup; another owner/anonymous caller cannot.
+
+Deleting a project queues its asset paths before cascading private projections, versions, metadata and shares. The application attempts file removal and acknowledges the difference between project deletion and incomplete file cleanup. Durable owner-scoped jobs retry on the dashboard or an explicit action. A background worker for deleted accounts/never-returning owners remains a Phase 9 retention/operations task; it is not implemented or claimed.
+
+Shares pin an immutable project revision and store only a SHA-256 token hash with expiry/revocation. The sole anonymous resolver returns the validated scene document, never owner/project/storage metadata. Raw 256-bit tokens stay in URL fragments and an uncached POST body. The separate read-only renderer uses the same room geometry, sample furniture recipes and camera-framing domain logic, without the mutable editor store or mutation controls. It supports orbit, keyboard pan/zoom/reset, labeled dimension sources and graphics fallback/retry. Downloaded snapshots cannot be recalled by revocation.
