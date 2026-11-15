@@ -116,6 +116,7 @@ export function validateDimensions(dimensions: Dimensions): string | null {
 }
 export type RoomCommand =
   | { type: 'dimensions'; values: Partial<Record<Axis, number>> }
+  | { type: 'photo-dimension'; axis: Axis; meters: number }
   | { type: 'wall-material'; id: WallMaterialId }
   | { type: 'floor-material'; id: FloorMaterialId }
   | { type: 'create'; preset: PresetId };
@@ -125,6 +126,17 @@ export function applyRoomCommand(
 ): { room: Room; error: string | null } {
   let next: Room;
   switch (command.type) {
+    case 'photo-dimension':
+      if (!axes.includes(command.axis))
+        return { room, error: 'Unknown room axis.' };
+      next = {
+        ...room,
+        dimensions: {
+          ...room.dimensions,
+          [command.axis]: { meters: command.meters, source: 'image_estimated' },
+        },
+      };
+      break;
     case 'create':
       if (!Object.hasOwn(presets, command.preset))
         return { room, error: 'Unknown room preset.' };

@@ -2,9 +2,17 @@
 
 ## Current phase
 
-**Phase 5 — accounts and cloud projects complete.** The user's next-phase request authorized Phase 5 and explicitly selected local Supabase for development/testing. Phases 0–5 are complete. Phase 6 (photo reference and AR) is next and requires separate approval; it has not started.
+**Phase 6 — photo reference and experimental AR implemented for review.** The user's next-phase request explicitly authorized Phase 6 on 2026-11-15. Phases 0–5 remain complete. Photo calibration and experimental WebXR are implemented; **the Phase 6 gate remains open because physical HTTPS device/scale validation is pending**. Phase 7 is not authorized.
 
-## Completed
+## Phase 6 changes
+
+- Added private, session-only photo selection/review, bounded JPEG/PNG validation before decode, re-encoded previews, object-URL cleanup and safe replacement/removal. No image is uploaded, exported, shared or persisted into guest/cloud storage.
+- Added pointer and keyboard/numeric marker controls, same-plane known-length calibration, live approximate-axis preview and sample-concept dimension comparisons. Explicit application changes only one room axis through normal undo/redo as `image_estimated`, with unknown uncertainty. Existing persistence/recovery retains provenance.
+- Added an additive room-provenance SQL migration; old applied migrations are unchanged. Furniture/doorway validation and ownership remain unchanged. Schema generation requires a new SQL output path and refuses overwriting an existing file.
+- Added feature-detected experimental WebXR AR with the existing original sample recipes at nominal meter scale, horizontal hit testing, fixed scale, placement/rotation/reset/exit, session cleanup, permission recovery and 3D fallback. No new dependencies or external assets.
+- Added calibration/file/model/lifecycle tests, guest/cloud browser journeys and database provenance coverage. Actual results are in [TESTING.md](TESTING.md); physical-device requirements are in [PHOTO_AR.md](PHOTO_AR.md).
+
+## Earlier completed work (Phases 0–5)
 
 - Preserved the working guest landing, rectangular-room editor, catalog/placement, spatial analysis, history, scene migration and local recovery. Guest editing still needs no account or backend configuration.
 - Added real Supabase passwordless email-code registration/login, resend and sign-out with verified server-side user sessions, HttpOnly/SameSite cookies, HTTPS configuration checks, and no application service-role client.
@@ -31,11 +39,11 @@
 - Private cleanup jobs retry when their owner uses the dashboard. A background worker for deleted accounts or owners who never return remains Phase 9 operational/retention work. Physical file deletion failures are reported and queued rather than falsely marked complete.
 - Share links intentionally reveal their selected scene, including entered content. Revocation/expiry prevent future reads, not access to downloaded copies. Shares use original procedural assets only and do not grant general project/storage access.
 - Sample dimensions/geometry are not manufacturer verification. Spatial analysis remains nominal envelopes, not exact mesh intersection, delivery-route planning, physical-fit guarantees or accessibility certification. Existing room/furniture bounds and 100-object limits remain.
-- Physical-device GPU/touch performance, Safari/Firefox and a complete accessibility/security audit remain unverified. Photo assistance, AR, AI, merchant models, billing and launch hardening remain later phases.
+- Physical-device GPU/touch performance, Safari/Firefox and a complete accessibility/security audit remain unverified. Photo calibration and experimental WebXR are implemented; physical AR scale/tracking remains unverified. AI, merchant models, billing and launch hardening remain later phases.
 
 ## Next recommended task
 
-After approval, implement **Phase 6 only**: validated photo-reference upload, known measurements and manual approximate calibration, plus supported-platform AR at validated scale with fallback/return navigation. Keep uncertainty explicit and validate on actual supported HTTPS devices before claiming AR works. Preserve guest/cloud ownership, storage validation, snapshots and recovery; do not start AI/retailer/billing work.
+Review Phase 6 and complete the compatible physical HTTPS device/scale checks in [PHOTO_AR.md](PHOTO_AR.md). The phase gate remains open until evidence is recorded; do not start AI, retailer or billing work. Phase 7 requires separate approval after the gate is resolved.
 
 ## Reusable cloud configuration
 

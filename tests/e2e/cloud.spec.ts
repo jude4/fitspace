@@ -6,7 +6,51 @@ import {
   type APIRequestContext,
 } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { uploadReference } from '../helpers/photo';
 const enabled = process.env.FITSPACE_SUPABASE_E2E === '1';
+test('photo-calibrated dimensions retain provenance through cloud save and reload while photos stay private', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await signIn(page);
+  const id = await createProject(page, 'Photo estimate room');
+  await page
+    .getByRole('button', { name: 'Photo reference & calibration' })
+    .click();
+  await uploadReference(page);
+  await page.getByLabel('Known reference length (meters)').fill('3');
+  await page.getByRole('button', { name: 'Apply approximate width' }).click();
+  await page
+    .getByRole('button', { name: 'Return to room', exact: true })
+    .click();
+  await saved(page);
+  await page.reload();
+  await expect(page.getByTestId('editor-viewport')).toHaveAttribute(
+    'data-width',
+    '6',
+  );
+  await expect(
+    page.getByText('Photo estimate · uncertainty unknown'),
+  ).toBeVisible();
+  const record = await page.request.get(`/api/projects/${id}`);
+  expect(record.ok()).toBe(true);
+  const raw = await record.text();
+  expect(raw).toContain('image_estimated');
+  expect(raw).not.toContain('blob:');
+  expect(raw).not.toContain('data:image');
+  await page
+    .getByRole('button', { name: 'Photo reference & calibration' })
+    .click();
+  await expect(page.getByAltText('Your private room reference')).toHaveCount(0);
+  await page
+    .getByRole('button', { name: 'Return to room', exact: true })
+    .click();
+  await page.goto('/workspace');
+  await expect(page.getByTestId('editor-viewport')).toHaveAttribute(
+    'data-width',
+    '4',
+  );
+});
 test.skip(
   !enabled,
   'Enable FITSPACE_SUPABASE_E2E=1 with the real local Supabase stack.',

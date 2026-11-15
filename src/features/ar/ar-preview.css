@@ -1,0 +1,47 @@
+.ar-preview {
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid #cdd3c4;
+  border-radius: 8px;
+  background: #eef0e6;
+}
+.ar-preview h3 {
+  font-size: 16px;
+}
+.ar-preview p {
+  font-size: 12px;
+  line-height: 1.65;
+  margin: 10px 0;
+}
+.ar-overlay {
+  display: none;
+}
+.ar-overlay-active {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  pointer-events: none;
+  background: transparent;
+  color: white;
+  padding: 16px;
+}
+.ar-overlay-active p {
+  background: #26362be8;
+  padding: 8px;
+  border-radius: 6px;
+}
+.ar-overlay-active > * {
+  pointer-events: auto;
+}
+.ar-overlay-active .button {
+  margin: 4px;
+}
+.ar-overlay-active:fullscreen {
+  background: transparent;
+  padding-top: max(16px, env(safe-area-inset-top));
+}
+.ar-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}

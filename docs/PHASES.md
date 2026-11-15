@@ -60,7 +60,7 @@ Acceptance: data survives refresh and relogin; failed/conflicting saves retain e
 
 ## Phase 6 — Photo reference and AR
 
-**Status:** Not started; depends on approved Phase 5.
+**Status:** Implementation delivered for review (2026-11-15), following explicit user approval. Automated/local checks are recorded in TESTING.md. Physical HTTPS device/scale validation is pending, so the Phase 6 acceptance gate remains open; Phase 7 is not authorized.
 
 Deliver: validated photo upload/review, known reference measurements, manually calibrated approximate room geometry, product concept comparison; supported platform product AR at correct scale with return navigation and unsupported-device fallback.
 

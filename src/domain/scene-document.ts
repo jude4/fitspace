@@ -33,7 +33,7 @@ const record = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
 const text = (v: unknown, max = 80): v is string =>
   typeof v === 'string' && v.length > 0 && v.length <= max;
-function dimensionSet(value: unknown): Dimensions {
+function dimensionSet(value: unknown, allowPhoto = false): Dimensions {
   if (!record(value)) throw new Error('Dimensions are missing.');
   const dimensions = {} as Dimensions;
   for (const axis of axes) {
@@ -51,8 +51,12 @@ function dimensionSet(value: unknown): Dimensions {
       ].includes(String(d.source))
     )
       throw new Error('Invalid measurement data.');
-    // Current guest files accept only sample or user-entered measurements. No verification authority exists yet.
-    if (d.source !== 'sample' && d.source !== 'user_entered')
+    // Photo estimates are room-only; imports cannot confer verification authority.
+    if (
+      d.source !== 'sample' &&
+      d.source !== 'user_entered' &&
+      !(allowPhoto && d.source === 'image_estimated')
+    )
       throw new Error(
         'Unsupported measurement provenance in this guest scene.',
       );
@@ -105,7 +109,7 @@ export function parseScene(raw: string): SceneDocument {
     ...createRoom(),
     id: r.id,
     name: r.name,
-    dimensions: dimensionSet(r.dimensions),
+    dimensions: dimensionSet(r.dimensions, true),
     wallMaterialId: r.wallMaterialId as Room['wallMaterialId'],
     floorMaterialId: r.floorMaterialId as Room['floorMaterialId'],
   };

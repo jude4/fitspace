@@ -7,6 +7,7 @@ import { SceneBoundary } from '@/components/scene-boundary';
 import { Button } from '@/components/ui/button';
 import { useWebGL } from '@/lib/use-webgl';
 import { useEditorStore } from '@/features/editor/editor-store';
+import { ARPreview } from '@/features/ar/ar-preview';
 const Preview = dynamic(() => import('@/scene/product-preview-canvas'), {
   ssr: false,
   loading: () => <p>Loading 3D preview…</p>,
@@ -90,6 +91,7 @@ export function ProductDialog({
           {addError}
         </p>
       )}
+      <ARPreview product={product} />
       <Button
         onClick={() => {
           if (

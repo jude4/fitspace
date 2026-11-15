@@ -17,6 +17,7 @@ import { useEditorStore } from './editor-store';
 import { DimensionForm } from './dimension-form';
 import { CatalogPanel } from '@/features/catalog/catalog-panel';
 import { findProduct } from '@/domain/catalog';
+import { PhotoReference } from '@/features/photo/photo-reference';
 export function RoomPanel() {
   const {
     room,
@@ -59,6 +60,9 @@ export function RoomPanel() {
         <span className="eyebrow">YOUR SPACE</span>
         <h2>Room to begin.</h2>
         <p>A measured foundation for your next idea.</p>
+      </div>
+      <div className="panel-section">
+        <PhotoReference key={room.id} />
       </div>
       <div className="panel-section">
         <label className="editor-field-label" htmlFor="room-preset">
