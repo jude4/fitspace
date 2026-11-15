@@ -63,6 +63,16 @@ Enter clear doorway width **0.2–5 m** and height **0.5–4 m**, or leave eithe
 
 Compare selected/other object width, depth, and height in the comparison table. The summary counts every finding; long reports initially display the 60 most severe entries, with **Show more findings** for the remainder. Applied spatial settings participate in undo/redo, JSON import/export, and local saving. Warning visibility and clearance-outline toggles remain transient.
 
+## Photo reference and experimental AR (Phase 6)
+
+In **Room & scene**, open **Photo reference & calibration**. Select a JPEG or PNG up to 8 MiB, 8192 pixels per side and 24 megapixels. FitSpace checks the signature and dimensions before decoding, then prepares a bounded, metadata-free raster preview. Photos stay in the current workspace session; they are never uploaded, saved to projects, exported or shared. Leaving/reloading clears the photo. Only use photos you have permission to use.
+
+Set markers 1–2 around a known reference and 3–4 around the target room edge. Click to place markers or edit their percentage coordinates with the keyboard. Enter the reference length in meters, choose width/depth/height, and review the live estimate and sample-concept comparison. Both segments must be in the same plane and at the same camera distance; perspective or lens distortion can invalidate the ratio. A reference does not recover depth from a single image. Calibrate each axis separately, then explicitly **Apply approximate …**. This changes only that axis, participates in undo/redo, and saves through the existing guest/cloud path as `image_estimated`, with unknown uncertainty. Reapplying is required after reference edits. This is manual approximation, not photogrammetry or a physical-fit guarantee.
+
+Product details include **Try AR at sample scale** on compatible secure-context WebXR AR devices. The experimental renderer reuses the original sample recipes in meters, requires horizontal hit testing and a floor reference space, supports tap-to-place/reposition, 45° rotation, reset and return, and disables scaling. It does not alter the editor scene. Permission denial or unsupported capabilities retain the ordinary 3D preview and dimensions. Use device system controls to exit if DOM overlay controls are unavailable. There are no external model uploads, Scene Viewer or Quick Look claims.
+
+**Physical AR device/HTTPS/scale validation is still pending; the Phase 6 gate remains open.** Software model bounds and simulated WebXR tests do not establish physical scale, tracking, camera permission behavior or performance on a phone. See [the device checklist](docs/PHOTO_AR.md).
+
 ## Accounts, cloud projects, and sharing (Phase 5)
 
 Open **Projects** to sign in or register with a six-digit email code. A new code replaces password-reset workflows. The local development stack delivers mail to Mailpit; hosted projects need the documented email templates and SMTP configuration. Without a Supabase connection, the account page explains availability and keeps the guest route usable.
@@ -114,4 +124,4 @@ The `○ (Static) prerendered as static content` build summary is normal: it des
 - [Supabase setup and cloud behavior](docs/SUPABASE.md)
 - [Asset provenance](docs/ASSETS.md) and [third-party notices](THIRD_PARTY_NOTICES.md)
 
-Meters are the canonical geometry unit. Demo furniture and dimensions are samples, not verified retailer products. Simplified checks do not guarantee physical fit or delivery. No supplied reference photos are redistributed. Supabase is optional for guests; AI, AR, and Stripe remain later phases; never store secrets in Git or chat.
+Meters are the canonical geometry unit. Demo furniture and dimensions are samples, not verified retailer products. Simplified checks do not guarantee physical fit or delivery. No supplied reference photos are redistributed. Supabase is optional for guests; AR is experimental and device-unverified; AI and Stripe remain later phases; never store secrets in Git or chat.

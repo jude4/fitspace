@@ -19,7 +19,7 @@ Phases 6–9 complete the requested launch scope: calibrated photo reference, de
 1. **Guest:** landing → Start Designing → room preset or measured rectangle → catalog → place/rotate furniture → inspect dimensions and warnings → recover after refresh. Local save is explicitly distinct from cloud save.
 2. **Account owner:** guest design → sign in → explicitly import into an owned project → autosave → reopen → duplicate/rename → create/revoke a read-only share. Signing out clears private client caches; cloud errors never appear as successful saves.
 3. **Viewer:** open share link → inspect the shared snapshot → no mutations or access to unrelated projects. Revocation disables future access.
-4. **Real-space preview (later):** photo + known measurements → manually calibrated approximation, or compatible product → supported AR viewer → return to design. Unsupported devices receive an honest fallback.
+4. **Real-space preview (Phase 6, device gate open):** private session photo + known same-plane reference → manually calibrated approximation, or sample product → experimental WebXR viewer → return to design. Unsupported devices retain the 3D preview; physical AR device/scale validation remains pending.
 5. **Retailer (later):** licensed model + verified dimensions → validated catalog entry → preview/embed → authentic retailer product link. Demo objects never masquerade as purchasable real products.
 
 ## Visual direction

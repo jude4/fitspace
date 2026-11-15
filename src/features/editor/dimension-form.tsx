@@ -136,7 +136,9 @@ export function DimensionForm({ room, units }: { room: Room; units: Units }) {
           <small>
             {room.dimensions[axis].source === 'sample'
               ? 'Sample dimension'
-              : 'User-entered · not independently verified'}{' '}
+              : room.dimensions[axis].source === 'image_estimated'
+                ? 'Photo estimate · uncertainty unknown'
+                : 'User-entered · not independently verified'}{' '}
             · {formatLength(room.dimensions[axis].meters, units)}
           </small>
         </fieldset>

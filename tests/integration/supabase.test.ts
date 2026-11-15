@@ -77,6 +77,76 @@ afterAll(async () => {
   for (const user of users) await admin.auth.admin.deleteUser(user);
 });
 describe('real local Supabase ownership, transactions and shares', () => {
+  it('persists and shares photo estimates without accepting verified or furniture photo provenance', async () => {
+    const doc = structuredClone(initial);
+    doc.room.dimensions.width = { meters: 6, source: 'image_estimated' };
+    const projectId = crypto.randomUUID();
+    const created = await a.rpc('create_project', {
+      p_id: projectId,
+      p_title: 'Photo calibration',
+      p_document: doc,
+      p_request_id: crypto.randomUUID(),
+    });
+    expect(created.error).toBeNull();
+    const record = await a
+      .from('projects')
+      .select('current_scene')
+      .eq('id', projectId)
+      .single();
+    expect(record.data?.current_scene.room.dimensions.width).toEqual(
+      doc.room.dimensions.width,
+    );
+    expect(
+      (await b.from('projects').select('*').eq('id', projectId)).data,
+    ).toEqual([]);
+    const token = randomBytes(32).toString('base64url');
+    expect(
+      (
+        await a.rpc('create_share', {
+          p_id: projectId,
+          p_revision: 1,
+          p_hash: hash(token),
+          p_expires: new Date(Date.now() + 60000).toISOString(),
+        })
+      ).error,
+    ).toBeNull();
+    const shared = await anonymous.rpc('resolve_share', {
+      p_hash: hash(token),
+    });
+    expect(shared.data.room.dimensions.width).toEqual(
+      doc.room.dimensions.width,
+    );
+    for (const edit of [
+      (d: SceneDocument) => {
+        d.room.dimensions.width.source = 'manufacturer_verified';
+      },
+      (d: SceneDocument) => {
+        d.placements[0].dimensions.width.source = 'image_estimated';
+      },
+    ]) {
+      const invalid = structuredClone(doc);
+      edit(invalid);
+      expect(
+        (
+          await a.rpc('save_project', {
+            p_id: projectId,
+            p_expected_revision: 1,
+            p_document: invalid,
+            p_title: null,
+            p_request_id: crypto.randomUUID(),
+          })
+        ).error?.code,
+      ).toBe('22023');
+    }
+    expect(
+      (
+        await a.rpc('delete_project', {
+          p_id: projectId,
+          p_expected_revision: 1,
+        })
+      ).error,
+    ).toBeNull();
+  });
   it('creates canonical data, normalized rows and an immutable version atomically', async () => {
     const p = await a.from('projects').select('*').eq('id', id).single();
     expect(p.error).toBeNull();

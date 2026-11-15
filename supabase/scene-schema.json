@@ -32,7 +32,7 @@
                   "maximum": 30
                 },
                 "source": {
-                  "enum": ["sample", "user_entered"]
+                  "enum": ["sample", "user_entered", "image_estimated"]
                 },
                 "uncertaintyMeters": {
                   "type": "number",
@@ -68,7 +68,7 @@
                   "maximum": 30
                 },
                 "source": {
-                  "enum": ["sample", "user_entered"]
+                  "enum": ["sample", "user_entered", "image_estimated"]
                 },
                 "uncertaintyMeters": {
                   "type": "number",
@@ -104,7 +104,7 @@
                   "maximum": 6
                 },
                 "source": {
-                  "enum": ["sample", "user_entered"]
+                  "enum": ["sample", "user_entered", "image_estimated"]
                 },
                 "uncertaintyMeters": {
                   "type": "number",

@@ -70,3 +70,7 @@ Local validation does not establish hosted deployment or email deliverability. F
 - `FITSPACE_SITE_URL`: the actual HTTPS application origin. Only localhost/127.0.0.1 may use HTTP in development.
 
 Configure six-digit email OTPs and the provided confirmation/magic-link email templates. Configure production SMTP and appropriate Auth rate limits/expiry settings in Supabase; the high local mail limit is for isolated tests, not production. Rerun the account/save/storage/share journeys against the designated project before deploying or claiming hosted validation. Launch security/rate limiting, monitoring, legal/retention policy, and background orphan cleanup remain Phase 9 work.
+
+## Phase 6 photo estimates
+
+Run the existing `pnpm supabase:start` wrapper to apply `20261115000000_photo_estimates.sql` without resetting local data. It additively permits `image_estimated` for room dimensions in the existing scene-2 validator and leaves catalog, doorway, ownership, size and atomic-write rules unchanged. Apply this migration to a designated hosted development project before using photo estimates there; hosted application remains unverified. Photos themselves remain browser-session-only and never enter Supabase storage or shared snapshots. The integration suite verifies estimate persistence/share provenance and rejects furniture photo or manufacturer-verification relabeling.

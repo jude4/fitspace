@@ -296,11 +296,13 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     }
     set({
       announcement:
-        command.type === 'dimensions'
-          ? 'Room dimensions updated.'
-          : command.type === 'create'
-            ? 'Empty room created with sample dimensions.'
-            : 'Room materials updated.',
+        command.type === 'photo-dimension'
+          ? 'Approximate photo dimension applied. Uncertainty is unknown.'
+          : command.type === 'dimensions'
+            ? 'Room dimensions updated.'
+            : command.type === 'create'
+              ? 'Empty room created with sample dimensions.'
+              : 'Room materials updated.',
       room: result.room,
       past: [
         ...current.past,

@@ -19,3 +19,7 @@ Each product pins revision 1 and a `procedural:<product-id>:1` asset ID. Retain 
 ## Phase 5
 
 `src/features/projects/thumbnail.ts` generates original PNG plan previews from validated room/furniture envelopes. These bounded 320 × 240 diagrams are private project thumbnails, not photographs or photorealistic renders. The read-only viewer reuses the existing original room/furniture geometry. No external models, photos, fonts, HDRs, merchant assets, or user image uploads were introduced. Supabase SDK/CLI dependency licenses remain in their packages.
+
+## Phase 6
+
+Photo selection is private, browser-local review, with an explicit permission-to-use reminder; no user photo or decoded preview is redistributed, uploaded or saved. E2E reference images are original simple colored rectangles generated in the test browser. AR reuses the original procedural catalog recipes and existing Three.js geometry, materials and licenses; no external product models, services or new dependencies are introduced. Software bounds match the sample meter dimensions; physical AR scale is not yet verified.
